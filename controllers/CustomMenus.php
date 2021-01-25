@@ -1,4 +1,4 @@
-<?php namespace Xitara\Core\Controllers;
+<?php namespace Xitara\Nexus\Controllers;
 
 use BackendMenu;
 use Backend\Classes\Controller;
@@ -20,8 +20,8 @@ class CustomMenus extends Controller
     {
         parent::__construct();
 
-        BackendMenu::setContext('Xitara.Core', 'core', 'core.custommenus');
+        BackendMenu::setContext('Xitara.Nexus', 'nexus', 'nexus.custommenus');
 
-        $this->pageTitle = 'xitara.core::core.submenu.user_menus';
+        $this->pageTitle = 'xitara.nexus::core.submenu.user_menus';
     }
 }

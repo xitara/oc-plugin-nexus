@@ -1,19 +1,18 @@
-<?php namespace Xitara\Core;
+<?php namespace Xitara\Nexus;
 
 use App;
 use Backend;
 use BackendMenu;
 use Config;
 use Event;
-use Html;
 use Redirect;
-use Storage;
 use Str;
 use System\Classes\PluginBase;
 use System\Classes\PluginManager;
-use Xitara\Core\Models\Config as CoreConfig;
-use Xitara\Core\Models\CustomMenu;
-use Xitara\Core\Models\Menu;
+use Xitara\Nexus\Classes\TwigFilter;
+use Xitara\Nexus\Models\CustomMenu;
+use Xitara\Nexus\Models\Menu;
+use Xitara\Nexus\Models\Setting as NexusSetting;
 
 class Plugin extends PluginBase
 {
@@ -29,25 +28,25 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name' => 'xitara.core::lang.plugin.name',
-            'description' => 'xitara.core::lang.plugin.description',
-            'author' => 'xitara.core::lang.plugin.author',
-            'homepage' => 'xitara.core::lang.plugin.homepage',
+            'name' => 'xitara.nexus::lang.plugin.name',
+            'description' => 'xitara.nexus::lang.plugin.description',
+            'author' => 'xitara.nexus::lang.plugin.author',
+            'homepage' => 'xitara.nexus::lang.plugin.homepage',
             'icon' => '',
-            'iconSvg' => 'plugins/xitara/core/assets/images/icon-core.svg',
+            'iconSvg' => 'plugins/xitara/nexus/assets/images/icon-nexus.svg',
         ];
     }
 
     public function register()
     {
         BackendMenu::registerContextSidenavPartial(
-            'Xitara.Core',
-            'core',
-            '$/xitara/core/partials/_sidebar.htm'
+            'Xitara.Nexus',
+            'nexus',
+            '$/xitara/nexus/partials/_sidebar.htm'
         );
 
-        $this->registerConsoleCommand('xitara.fakeblog', 'Xitara\Core\Console\FakeBlog');
-        $this->registerConsoleCommand('xitara.fakeuser', 'Xitara\Core\Console\FakeUser');
+        $this->registerConsoleCommand('xitara.fakeblog', 'Xitara\Nexus\Console\FakeBlog');
+        $this->registerConsoleCommand('xitara.fakeuser', 'Xitara\Nexus\Console\FakeUser');
     }
 
     public function boot()
@@ -60,24 +59,24 @@ class Plugin extends PluginBase
         /**
          * set new backend-skin
          */
-        Config::set('cms.backendSkin', 'Xitara\Core\Classes\BackendSkin');
+        Config::set('cms.backendSkin', 'Xitara\Nexus\Classes\BackendSkin');
 
         /**
          * add items to sidemenu
          */
-        $this->getSideMenu('Xitara.Core', 'core');
+        $this->getSideMenu('Xitara.Nexus', 'nexus');
 
         Event::listen('backend.page.beforeDisplay', function ($controller, $action, $params) {
-            if (CoreConfig::get('compact_display')) {
-                $controller->addCss('/plugins/xitara/core/assets/css/compact.css');
+            if (NexusSetting::get('compact_display')) {
+                $controller->addCss('/plugins/xitara/nexus/assets/css/compact.css');
             }
 
-            $controller->addCss('/plugins/xitara/core/assets/css/backend.css');
-            $controller->addCss('/plugins/xitara/core/assets/css/app.css');
-            $controller->addJs('/plugins/xitara/core/assets/js/app.js');
+            $controller->addCss('/plugins/xitara/nexus/assets/css/darkmode.css');
+            // $controller->addCss('/plugins/xitara/nexus/assets/css/app.css');
+            $controller->addJs('/plugins/xitara/nexus/assets/js/backend.js');
 
             if ($controller instanceof Backend\Controllers\Index) {
-                return Redirect::to('/backend/xitara/core/dashboard');
+                return Redirect::to('/backend/xitara/nexus/dashboard');
             }
         });
 
@@ -91,19 +90,19 @@ class Plugin extends PluginBase
 
     public function registerSettings()
     {
-        if (($category = CoreConfig::get('menu_text')) == '') {
-            $category = 'xitara.core::core.config.name';
+        if (($category = NexusSetting::get('menu_text')) == '') {
+            $category = 'xitara.nexus::core.setting.name';
         }
 
         return [
-            'configs' => [
+            'settings' => [
                 'category' => $category,
-                'label' => 'xitara.core::lang.config.label',
-                'description' => 'xitara.core::lang.config.description',
+                'label' => 'xitara.nexus::lang.setting.label',
+                'description' => 'xitara.nexus::lang.setting.description',
                 'icon' => 'icon-wrench',
-                'class' => 'Xitara\Core\Models\Config',
+                'class' => 'Xitara\Nexus\Models\Setting',
                 'order' => 0,
-                'permissions' => ['xitara.core.config'],
+                'permissions' => ['xitara.nexus.setting'],
             ],
         ];
     }
@@ -116,21 +115,21 @@ class Plugin extends PluginBase
     public function registerPermissions()
     {
         return [
-            'xitara.core.config' => [
-                'tab' => 'Xitara Core',
-                'label' => 'xitara.core::permissions.config',
+            'xitara.nexus.setting' => [
+                'tab' => 'Xitara Nexus',
+                'label' => 'xitara.nexus::permissions.setting',
             ],
-            'xitara.core.dashboard' => [
-                'tab' => 'Xitara Core',
-                'label' => 'xitara.core::permissions.dashboard',
+            'xitara.nexus.dashboard' => [
+                'tab' => 'Xitara Nexus',
+                'label' => 'xitara.nexus::permissions.dashboard',
             ],
-            'xitara.core.menu' => [
-                'tab' => 'Xitara Core',
-                'label' => 'xitara.core::permissions.menu',
+            'xitara.nexus.menu' => [
+                'tab' => 'Xitara Nexus',
+                'label' => 'xitara.nexus::permissions.menu',
             ],
-            'xitara.core.custommenus' => [
-                'tab' => 'Xitara Core',
-                'label' => 'xitara.core::permissions.custommenus',
+            'xitara.nexus.custommenus' => [
+                'tab' => 'Xitara Nexus',
+                'label' => 'xitara.nexus::permissions.custommenus',
             ],
         ];
     }
@@ -142,24 +141,24 @@ class Plugin extends PluginBase
      */
     public function registerNavigation()
     {
-        $iconSvg = CoreConfig::get('menu_icon');
-        if ($iconSvg == '' && CoreConfig::get('menu_icon_text', '') == '') {
-            $iconSvg = 'plugins/xitara/core/assets/images/icon-core.svg';
+        $iconSvg = NexusSetting::get('menu_icon');
+        if ($iconSvg == '' && NexusSetting::get('menu_icon_text', '') == '') {
+            $iconSvg = 'plugins/xitara/nexus/assets/images/icon-nexus.svg';
         } elseif ($iconSvg != '') {
             $iconSvg = url(Config::get('cms.storage.media.path') . $iconSvg);
         }
 
-        if (($label = CoreConfig::get('menu_text')) == '') {
-            $label = 'xitara.core::lang.submenu.label';
+        if (($label = NexusSetting::get('menu_text')) == '') {
+            $label = 'xitara.nexus::lang.submenu.label';
         }
 
         return [
-            'core' => [
+            'nexus' => [
                 'label' => $label,
-                'url' => Backend::url('xitara/core/dashboard'),
-                'icon' => CoreConfig::get('menu_icon_text', 'icon-leaf'),
+                'url' => Backend::url('xitara/nexus/dashboard'),
+                'icon' => NexusSetting::get('menu_icon_text', 'icon-leaf'),
                 'iconSvg' => $iconSvg,
-                'permissions' => ['xitara.core.*'],
+                'permissions' => ['xitara.nexus.*'],
                 'order' => 50,
             ],
         ];
@@ -205,39 +204,39 @@ class Plugin extends PluginBase
      */
     public static function getSideMenu(string $owner, string $code)
     {
-        // Log::debug(CoreConfig::get('menu_text'));
-        if (($group = CoreConfig::get('menu_text')) == '') {
-            $group = 'xitara.core::lang.submenu.label';
+        // Log::debug(NexusSetting::get('menu_text'));
+        if (($group = NexusSetting::get('menu_text')) == '') {
+            $group = 'xitara.nexus::lang.submenu.label';
         }
         // Log::debug($group);
 
         $items = [
-            'core.dashboard' => [
-                'label' => 'xitara.core::lang.core.dashboard',
-                'url' => Backend::url('xitara/core/dashboard'),
+            'nexus.dashboard' => [
+                'label' => 'xitara.nexus::lang.nexus.dashboard',
+                'url' => Backend::url('xitara/nexus/dashboard'),
                 'icon' => 'icon-dashboard',
                 'order' => 1,
-                'permissions' => ['xitara.core.dashboard'],
+                'permissions' => ['xitara.nexus.dashboard'],
                 'attributes' => [
                     'group' => $group,
                 ],
             ],
-            'core.menu' => [
-                'label' => 'xitara.core::lang.core.menu',
-                'url' => Backend::url('xitara/core/menu/reorder'),
+            'nexus.menu' => [
+                'label' => 'xitara.nexus::lang.nexus.menu',
+                'url' => Backend::url('xitara/nexus/menu/reorder'),
                 'icon' => 'icon-sort',
                 'order' => 2,
-                'permissions' => ['xitara.core.menu'],
+                'permissions' => ['xitara.nexus.menu'],
                 'attributes' => [
                     'group' => $group,
                 ],
             ],
-            'core.custommenus' => [
-                'label' => 'xitara.core::lang.custommenu.label',
-                'url' => Backend::url('xitara/core/custommenus'),
+            'nexus.custommenus' => [
+                'label' => 'xitara.nexus::lang.custommenu.label',
+                'url' => Backend::url('xitara/nexus/custommenus'),
                 'icon' => 'icon-link',
                 'order' => 3,
-                'permissions' => ['xitara.core.custommenus'],
+                'permissions' => ['xitara.nexus.custommenus'],
                 'attributes' => [
                     'group' => $group,
                 ],
@@ -249,10 +248,12 @@ class Plugin extends PluginBase
 
             if (method_exists($namespace, 'injectSideMenu')) {
                 $inject = $namespace::injectSideMenu();
+                // var_dump($namespace);
 
                 $items = array_merge($items, $inject);
             }
         }
+        // var_dump($items);
 
         Event::listen('backend.menu.extendItems', function ($manager) use ($owner, $code, $items) {
             $manager->addSideMenuItems($owner, $code, $items);
@@ -275,7 +276,7 @@ class Plugin extends PluginBase
      * @autor   mburghammer
      * @date    2020-06-26T21:13:34+02:00
      *
-     * @see Xitara\Core::getSideMenu
+     * @see Xitara\Nexus::getSideMenu
      * @return  array                   sidemenu-data
      */
     public static function injectSideMenu()
@@ -329,200 +330,22 @@ class Plugin extends PluginBase
 
     public function registerMarkupTags()
     {
+        $twigfilter = new TwigFilter;
+
         return [
             'filters' => [
-                'phone_link' => [$this, 'filterPhoneLink'],
-                'email_link' => [$this, 'filterEmailLink'],
-                'mediadata' => [$this, 'filterMediaData'],
-                'filesize' => [$this, 'filterFileSize'],
-                'regex_replace' => [$this, 'filterRegexReplace'],
+                'phone_link' => [$twigfilter, 'filterPhoneLink'],
+                'email_link' => [$twigfilter, 'filterEmailLink'],
+                'mediadata' => [$twigfilter, 'filterMediaData'],
+                'filesize' => [$twigfilter, 'filterFileSize'],
+                'regex_replace' => [$twigfilter, 'filterRegexReplace'],
                 'slug' => 'str_slug',
-                'strip_html' => [$this, 'filterStripHtml'],
-                'truncate_html' => [$this, 'filterTruncateHtml'],
+                'strip_html' => [$twigfilter, 'filterStripHtml'],
+                'truncate_html' => [$twigfilter, 'filterTruncateHtml'],
             ],
             'functions' => [
-                'uid' => [$this, 'functionGenerateUid'],
+                'uid' => [$twigfilter, 'functionGenerateUid'],
             ],
         ];
-    }
-
-    /**
-     * adds link to given phone
-     *
-     * options: {
-     *     'classes': 'class1 class2 classN',
-     *     'text_before': '<strong>sample</strong>',
-     *     'text_after': '<strong>sample</strong>',
-     *     'hide_mail': true|false (hide mail-address in text or not)
-     * }
-     *
-     * @param  string $text    text from twig
-     * @param  array $options options from twig
-     * @return string          complete link in html
-     */
-    public function filterPhoneLink($text, $options = null)
-    {
-        /**
-         * process options
-         */
-        $textBefore = $options['text_before'] ?? '';
-        $textAfter = $options['text_after'] ?? '';
-        $classes = $options['classes'] ?? null;
-        $hideNubmer = $options['hide_number'] ?? false;
-
-        /**
-         * generate link
-         */
-        $link = '<a';
-
-        if ($classes !== null) {
-            $link .= ' class="' . $classes . '"';
-        }
-
-        $link .= ' href="tel:';
-        $link .= preg_replace('/\(0\)|[^0-9\+]|\s+/', '', $text) . '">';
-        $link .= $textBefore;
-
-        if ($hideNubmer === false) {
-            $link .= $text;
-        }
-
-        $link .= $textAfter;
-        $link .= '</a>';
-
-        return $link;
-    }
-
-    /**
-     * adds link to given email
-     *
-     * options: {
-     *     'classes': 'class1 class2 classN',
-     *     'text_before': '<strong>sample</strong>',
-     *     'text_after': '<strong>sample</strong>',
-     *     'hide_mail': true|false (hide mail-address in text or not)
-     * }
-     *
-     * @param  string $text    text from twig
-     * @param  array $options options from twig
-     * @return string          complete link in html
-     */
-    public function filterEmailLink($text, $options = null)
-    {
-        /**
-         * remove subject and body from mail if given
-         */
-        $parts = explode('?', $text);
-        $mail = $parts[0];
-        $query = isset($parts[1]) ? '?' . $parts[1] : '';
-
-        /**
-         * obfuscate mailaddresses
-         * @var closure
-         */
-        // $o = function () use ($mail) {
-        //     $str = '';
-        //     $a = unpack("C*", $mail);
-
-        //     foreach ($a as $b) {
-        //         $str .= sprintf("%%%X", $b);
-        //     }
-
-        //     return $str;
-        // };
-
-        /**
-         * process options
-         */
-        $textBefore = $options['text_before'] ?? '';
-        $textAfter = $options['text_after'] ?? '';
-        $classes = $options['classes'] ?? null;
-        $hideMail = $options['hide_mail'] ?? false;
-
-        /**
-         * generate link
-         */
-        $link = '<a';
-
-        if ($classes !== null) {
-            $link .= ' class="' . $classes . '"';
-        }
-
-        $link .= ' href="mailto:' . Html::email($mail) . $query . '">';
-        $link .= $textBefore;
-
-        if ($hideMail === false) {
-            $link .= $mail;
-        }
-
-        $link .= $textAfter;
-        $link .= '</a>';
-
-        return $link;
-    }
-
-    /**
-     * mediadata filter
-     *
-     * file should be in storage/app/[path], where path-default is "media"
-     * for the media-manager
-     *
-     * @param  string $media filename
-     * @param  string $path  relativ path in storage/app
-     * @return array|boolean        filedata or false if file not exists
-     */
-    public function filterMediaData($media, $path = 'media')
-    {
-        if ($media === null) {
-            return false;
-        }
-
-        if (strpos(Storage::getMimetype($path . $media), '/')) {
-            list($type, $art) = explode('/', Storage::getMimetype($path . $media));
-        }
-
-        $data = [
-            'size' => Storage::size($path . $media),
-            'mime_type' => Storage::getMimetype($path . $media),
-            'type' => $type ?? null,
-            'art' => $art ?? null,
-        ];
-
-        return $data;
-    }
-
-    /**
-     * filesize filter
-     *
-     * returns filesize of given file
-     *
-     * @param  string $filename filename
-     * @param  string $path      path relative to storage/app, default "media"
-     * @return int|boolean           filesize in bytes or false if file not exists
-     */
-    public function filterFileSize($filename, $path = 'media')
-    {
-        $size = Storage::size($path . $filename);
-        return $size;
-    }
-
-    public function filterRegexReplace($subject, $pattern, $replacement)
-    {
-        return preg_replace($pattern, $replacement, $subject);
-    }
-
-    public function filterStripHtml($text)
-    {
-        return Html::strip($text);
-    }
-
-    public function filterTruncateHtml($text, $lenght, $hint = '...')
-    {
-        return Html::limit($text, $lenght, $hint);
-    }
-
-    public function functionGenerateUid()
-    {
-        return uniqid();
     }
 }

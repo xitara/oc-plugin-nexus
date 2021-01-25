@@ -788,6 +788,6 @@ module.exports = {
         transitionDelay: ['responsive'],
         animation: ['responsive'],
     },
-    corePlugins: {},
+    nexusPlugins: {},
     plugins: [],
 }

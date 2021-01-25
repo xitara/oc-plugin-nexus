@@ -1,4 +1,4 @@
-<?php namespace Xitara\Core\Classes;
+<?php namespace Xitara\Nexus\Classes;
 
 use Backend\Skins\Standard;
 
@@ -17,7 +17,7 @@ class BackendSkin extends Standard
     public function getLayoutPaths()
     {
         return [
-            base_path() . '/plugins/xitara/core/backend/layouts',
+            base_path() . '/plugins/xitara/nexus/backend/layouts',
             $this->skinPath . '/layouts',
         ];
     }

@@ -3,6 +3,18 @@
     $activeItem = BackendMenu::getActiveMainMenuItem();
     $mySettings = System\Classes\SettingsManager::instance()->listItems('mysettings');
     $navbarMode = Backend\Models\BrandSetting::get('menu_mode', 'inline');
+    $context = BackendMenu::getContext();
+
+    $isNexus = false;
+    if (strpos($context->sideMenuCode, 'nexus.') !== false) {
+        $isNexus = true;
+
+        BackendMenu::setContext(
+            $context->owner,
+            $context->mainMenuCode,
+            str_replace('nexus.', $context->mainMenuCode . '.', $context->sideMenuCode)
+        );
+    }
 ?>
 <nav class="navbar control-toolbar navbar-mode-<?= $navbarMode ?>" id="layout-mainmenu" role="navigation">
     <div class="toolbar-item toolbar-primary">
@@ -20,6 +32,7 @@
                 <?php foreach (BackendMenu::listMainMenuItems() as $item): ?>
                     <?php
                         $isActive = BackendMenu::isMainMenuItemActive($item);
+                        ($isNexus === true && $item->code == 'nexus') ? $isActive = true : null;
                         if (!strpos($item->label, '::hidden')):
                     ?>
                     <li class="<?= $isActive ? 'active' : null ?> svg-icon-container svg-active-effects">

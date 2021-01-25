@@ -1,9 +1,9 @@
-<?php namespace Xitara\Core\Controllers;
+<?php namespace Xitara\Nexus\Controllers;
 
 use BackendMenu;
 use Backend\Classes\Controller;
 use System\Classes\PluginManager;
-use Xitara\Core\Models\Menu as MenuModel;
+use Xitara\Nexus\Models\Menu as MenuModel;
 
 /**
  * Menu Back-end Controller
@@ -19,9 +19,9 @@ class Menu extends Controller
     public function __construct()
     {
         parent::__construct();
-        BackendMenu::setContext('Xitara.Core', 'core', 'core.menu');
+        BackendMenu::setContext('Xitara.Nexus', 'nexus', 'nexus.menu');
         $this->collectMenuItems();
-        $this->pageTitle = 'xitara.core::core.submenu.menu_order';
+        $this->pageTitle = 'xitara.nexus::core.submenu.menu_order';
     }
 
     private function collectMenuItems()

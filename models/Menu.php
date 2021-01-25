@@ -1,4 +1,4 @@
-<?php namespace Xitara\Core\Models;
+<?php namespace Xitara\Nexus\Models;
 
 use Model;
 
@@ -13,7 +13,7 @@ class Menu extends Model
     /**
      * @var string The database table used by the model.
      */
-    public $table = 'xitara_core_menus';
+    public $table = 'xitara_nexus_menus';
 
     /**
      * @var array Guarded fields

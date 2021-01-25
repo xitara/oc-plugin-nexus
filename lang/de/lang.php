@@ -1,25 +1,25 @@
 <?php
 return [
     'plugin' => [
-        'name' => 'Xitara Core',
-        'description' => 'Core-Plugin für alle Xitara-Plugins, inkl. Backend Seitenmenü',
+        'name' => 'Xitara Nexus',
+        'description' => 'Nexus-Plugin für alle Xitara-Plugins, inkl. Backend Seitenmenü',
         'author' => 'Xitara, Manuel Burghammer',
         'homepage' => 'https://xitara.net',
     ],
     'submenu' => [
-        'label' => 'Xitara Core',
+        'label' => 'Xitara Nexus',
     ],
-    'core' => [
+    'nexus' => [
         'mainmenu' => 'Hauptmenü',
         'dashboard' => 'Dashboard',
         'menu' => 'Menü-Sortierung',
     ],
-    'config' => [
+    'setting' => [
         'label' => 'Grundeinstellungen',
         'description' => 'Einstellungen global für alle Plugins',
     ],
     'install' => [
-        'heading' => 'Installation des Xitara Core nicht abgeschlossen',
+        'heading' => 'Installation des Xitara Nexus nicht abgeschlossen',
         'text' => 'Vor Beginn müssen einige Grundeinstellungen abgeschlossen werden.',
         'button' => 'Einstellungen',
     ],

@@ -3,13 +3,13 @@
 # ===================================
 
 # Reorder Title
-title: xitara.core::core.menu.reorder
+title: xitara.nexus::nexus.menu.reorder
 
 # Attribute name
 nameFrom: code
 
 # Model Class name
-modelClass: Xitara\Core\Models\Menu
+modelClass: Xitara\Nexus\Models\Menu
 
 # Toolbar widget configuration
 # toolbar:

@@ -3,7 +3,7 @@
 
 ### Custom ###
 build
-stats.json
+stats.json*
 assets
 src/**/*.css*
 yarn.lock
@@ -16,6 +16,7 @@ yarn.lock
 *sublime-*
 *sftp-config*
 /bash/config.sh
+*manifest.json*
 
 ### Composer ###
 composer.lock

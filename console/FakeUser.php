@@ -1,4 +1,4 @@
-<?php namespace Xitara\Core\Console;
+<?php namespace Xitara\Nexus\Console;
 
 use Auth;
 use Db;

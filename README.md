@@ -1,11 +1,11 @@
-# Xitara Core Plugin [![devDependency Status](https://david-dm.org/xitara/oc-plugin-core/dev-status.svg)](https://david-dm.org/xitara/oc-plugin-core/?type=dev) [![Known Vulnerabilities](https://snyk.io/test/github/xitara/oc-plugin-core/badge.svg)](https://snyk.io//test/github/xitara/oc-plugin-core)
+# Xitara Nexus Plugin [![devDependency Status](https://david-dm.org/xitara/oc-plugin-nexus/dev-status.svg)](https://david-dm.org/xitara/oc-plugin-nexus/?type=dev) [![Known Vulnerabilities](https://snyk.io/test/github/xitara/oc-plugin-nexus/badge.svg)](https://snyk.io//test/github/xitara/oc-plugin-nexus)
 
 Implements backend sidemenu, custom menus, menu sorting
 
 ## Getting started
 
-- clone the repo to folder `plugins/xitara/core`
-- cd to `plugins/xitara/core`
+- clone the repo to folder `plugins/xitara/nexus`
+- cd to `plugins/xitara/nexus`
 - run `yarn` to fetch all the dependencies
 
 ## Commands
@@ -47,14 +47,14 @@ if (!App::runningInBackend()) {
 }
 
 /**
- * get sidemenu if core-plugin is loaded
+ * get sidemenu if nexus-plugin is loaded
  */
-if (PluginManager::instance()->exists('Xitara.Core') === true) {
+if (PluginManager::instance()->exists('Xitara.Nexus') === true) {
     Event::listen('backend.page.beforeDisplay', function ($controller, $action, $params) {
         $namespace = (new \ReflectionObject($controller))->getNamespaceName();
 
         if ($namespace == '[VENDOR]\[PLUGIN]\Controllers') {
-            \Xitara\Core\Plugin::getSideMenu('[VENDOR].[PLUGIN]', '[PLUGIN-SLUG]');
+            \Xitara\Nexus\Plugin::getSideMenu('[VENDOR].[PLUGIN]', '[PLUGIN-SLUG]');
         }
     });
 }
@@ -64,11 +64,11 @@ if (PluginManager::instance()->exists('Xitara.Core') === true) {
 ```php
 public function register()
 {
-    if (PluginManager::instance()->exists('Xitara.Core') === true) {
+    if (PluginManager::instance()->exists('Xitara.Nexus') === true) {
         BackendMenu::registerContextSidenavPartial(
             '[VENDOR].[PLUGIN]',
             '[PLUGIN-SLUG]',
-            '$/xitara/core/partials/_sidebar.htm'
+            '$/xitara/nexus/partials/_sidebar.htm'
         );
     }
     // ...
@@ -81,14 +81,14 @@ public function registerNavigation()
 {
     $label = '[VENDOR-SLUG].[PLUGIN-SLUG]::lang.plugin.name';
 
-    if (PluginManager::instance()->exists('Xitara.Core') === true) {
+    if (PluginManager::instance()->exists('Xitara.Nexus') === true) {
         $label .= '::hidden';
     }
 
     return [
         '[VENDOR-SLUG]' => [
             'label' => $label,
-            'url' => Backend::url('[VENDOR-SLUG]/[PLUGIN-SLUG]/[CONTROLLER'),
+            'url' => Backend::url('[VENDOR-SLUG]/[PLUGIN-SLUG]/[CONTROLLER-SLUG]'),
             'icon' => 'icon-leaf',
             'permissions' => ['[VENDOR-SLUG].[PLUGIN-SLUG].*'],
             'order' => 500,
@@ -103,19 +103,28 @@ public static function injectSideMenu()
 {
     $i = 0;
     return [
-        '[PLUGIN-SLUG].[CONTROLLER]' => [
-            'label' => '[VENDOR].[PLUGIN-SLUG]::lang.submenu.[CONTROLLER]',
-            'url' => Backend::url('[VENDOR]/[PLUGIN-SLUG]/[CONTROLLER]'),
+        '[PLUGIN-SLUG].[CONTROLLER-SLUG]' => [
+            'label' => '[VENDOR-SLUG].[PLUGIN-SLUG]::lang.submenu.[CONTROLLER-SLUG]',
+            'url' => Backend::url('[VENDOR-SLUG]/[PLUGIN-SLUG]/[CONTROLLER-SLUG]'),
             'icon' => 'icon-archive',
-            'permissions' => ['[VENDOR].[PLUGIN-SLUG].*'],
+            'permissions' => ['[VENDOR-SLUG].[PLUGIN-SLUG].*'],
             'attributes' => [ // can be extendet if you need, no limitations
-                'group' => '[VENDOR].[PLUGIN-SLUG]::lang.submenu.label',
+                'group' => '[VENDOR-SLUG].[PLUGIN-SLUG]::lang.submenu.label',
                 'level' => 1, // optional, default is level 0. adds css-class level-X to li
             ],
-            'order' => Core::getMenuOrder('[VENDOR].[PLUGIN-SLUG]') + $i++,
+            'order' => Nexus::getMenuOrder('[VENDOR-SLUG].[PLUGIN-SLUG]') + $i++,
         ],
         ...
     ];
+}
+```
+
+### Set backend menu context in controller
+```php
+public function __construct()
+{
+    parent::__construct();
+    BackendMenu::setContext('[VENDOR].[PLUGIN]', '[PLUGIN-SLUG]', 'nexus.[CONTROLLER-SLUG]');
 }
 ```
 
@@ -124,27 +133,28 @@ public static function injectSideMenu()
 - `[VENDOR-SLUG].[PLUGIN-SLUG]::lang.submenu.label` is the heading of your menu items
 - `[VENDOR-SLUG].[PLUGIN-SLUG]::lang.submenu.[CONTROLLER]` is the your menu item
 
-## Register backend configs
+## Register backend settings
+### You must implement your own settings model in your plugin
 On top of `Plugin.php`:
 ```php
-use Xitara\Core\Models\Config;
+use Xitara\Nexus\Models\Setting;
 ```
 
 and as registration method
 ```php
 public function registerSettings()
 {
-    if (($category = Config::get('menu_text')) == '') {
-        $category = 'xitara.core::core.config.name';
+    if (($category = Setting::get('menu_text')) == '') {
+        $category = 'xitara.nexus::nexus.setting.name';
     }
 
     return [
-        'configs' => [
+        'settings' => [
             'category' => $category,
             'label' => '[VENDOR_SLUG].[PLUGIN_SLUG]::lang.submenu.label',
             'description' => '[VENDOR_SLUG].[PLUGIN_SLUG]::lang.submenu.description',
             'icon' => 'icon-comments-o',
-            'class' => '[VENDOR]\[PLUGIN]\Models\Config',
+            'class' => '[VENDOR]\[PLUGIN]\Models\Setting',
             'order' => 20,
         ],
     ];

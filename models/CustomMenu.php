@@ -1,8 +1,8 @@
-<?php namespace Xitara\Core\Models;
+<?php namespace Xitara\Nexus\Models;
 
 use Model;
 use Str;
-use Xitara\Core\Models\Menu;
+use Xitara\Nexus\Models\Menu;
 
 /**
  * CustomMenu Model
@@ -14,7 +14,7 @@ class CustomMenu extends Model
     /**
      * @var string The database table used by the model.
      */
-    public $table = 'xitara_core_custommenus';
+    public $table = 'xitara_nexus_custommenus';
 
     /**
      * @var array Guarded fields
@@ -75,7 +75,7 @@ class CustomMenu extends Model
     public function beforeSave()
     {
         /**
-         * update code from xitara_core_menus
+         * update code from xitara_nexus_menus
          */
         $success = Menu::where('code', 'xitara.custommenulist.' . $this->slug)
             ->update([
@@ -89,7 +89,7 @@ class CustomMenu extends Model
     public function beforeDelete()
     {
         /**
-         * delete code from xitara_core_menus
+         * delete code from xitara_nexus_menus
          */
     }
 }

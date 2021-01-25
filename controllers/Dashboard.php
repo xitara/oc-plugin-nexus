@@ -1,4 +1,4 @@
-<?php namespace Xitara\Core\Controllers;
+<?php namespace Xitara\Nexus\Controllers;
 
 use BackendMenu;
 use Backend\Classes\Controller;
@@ -11,8 +11,8 @@ use Cms\Classes\Theme;
 class Dashboard extends Controller
 {
     public $requiredPermissions = [
-        'xitara.core.mainmenu',
-        'xitara.core.dashboard',
+        'xitara.nexus.mainmenu',
+        'xitara.nexus.dashboard',
     ];
 
     public $implement = [
@@ -29,24 +29,24 @@ class Dashboard extends Controller
     public function __construct()
     {
         parent::__construct();
-        BackendMenu::setContextOwner('Xitara.Core');
-        BackendMenu::setContext('Xitara.Core', 'core', 'core.dashboard');
+        BackendMenu::setContextOwner('Xitara.Nexus');
+        BackendMenu::setContext('Xitara.Nexus', 'nexus', 'nexus.dashboard');
 
-        $this->pageTitle = 'xitara.core::core.submenu.dashboard';
+        $this->pageTitle = 'xitara.nexus::core.submenu.dashboard';
     }
 
     // public function componentDetails()
     // {
     //     return [
-    //         'name' => 'xitara.core::lang.core.dashboard',
-    //         'description' => 'xitara.core::lang.core.dashboardDescription',
+    //         'name' => 'xitara.nexus::lang.nexus.dashboard',
+    //         'description' => 'xitara.nexus::lang.nexus.dashboardDescription',
     //     ];
     // }
 
     public function index()
     {
         $this->initReportContainer();
-        $this->pageTitle = 'xitara.core::lang.plugin.name';
+        $this->pageTitle = 'xitara.nexus::lang.plugin.name';
 
         // $this->asExtension('ListController')->index();
     }
@@ -76,7 +76,7 @@ class Dashboard extends Controller
     public function index_onInitReportContainer()
     {
         $container = $this->initReportContainer();
-        return ['#coreReportContainer' => $container->render()];
+        return ['#nexusReportContainer' => $container->render()];
     }
 
     /**
@@ -85,7 +85,7 @@ class Dashboard extends Controller
      */
     protected function checkPermissionRedirect()
     {
-        if (!$this->user->hasAccess('xitara.core.dashboard')) {
+        if (!$this->user->hasAccess('xitara.nexus.dashboard')) {
             $true = function () {return true;};
             if ($first = array_first(BackendMenu::listMainMenuItems(), $true)) {
                 return Redirect::intended($first->url);

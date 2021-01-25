@@ -6,7 +6,7 @@
 <?php
     Block::put('sidepanel');
     if (!$this->fatalError) {
-        $this->makePartial('$/xitara/core/partials/_sidebar.htm');
+        $this->makePartial('$/xitara/nexus/partials/_sidebar.htm');
     }
     Block::endPut();
 ?>
@@ -14,8 +14,8 @@
 <?php
     Block::put('body');
 
-    if ($this->user->hasAccess('xitara.core.dashboard')) :
-        if (\Xitara\Core\Models\Config::get('timezone', true) === false):
+    if ($this->user->hasAccess('xitara.nexus.dashboard')) :
+        if (\Xitara\Nexus\Models\Setting::get('timezone', true) === false):
 ?>
     <div class="callout fade in callout-danger">
         <button
@@ -25,16 +25,16 @@
             aria-hidden="true">&times;</button>
         <div class="header">
             <i class="icon-warning"></i>
-            <h3><?= e(trans('xitara.core::lang.install.heading')) ?></h3>
+            <h3><?= e(trans('xitara.nexus::lang.install.heading')) ?></h3>
             <p>
-                <?= e(trans('xitara.core::lang.install.text')) ?>
+                <?= e(trans('xitara.nexus::lang.install.text')) ?>
             </p>
             <a
-                href="<?= Backend::url('system/settings/update/xitara/core/configs') ?>"
-                title="<?= e(trans('xitara.core::lang.install.button')) ?>"
+                href="<?= Backend::url('system/settings/update/xitara/nexus/configs') ?>"
+                title="<?= e(trans('xitara.nexus::lang.install.button')) ?>"
                 class="btn btn-primary"
             >
-                <?= e(trans('xitara.core::lang.install.button')) ?>
+                <?= e(trans('xitara.nexus::lang.install.button')) ?>
             </a>
         </div>
     </div>
@@ -44,7 +44,7 @@
         if (!$this->fatalError):
 ?>
     <?= Form::open(['class'=>'layout-relative dashboard-container']) ?>
-        <div id="coreReportContainer" class="report-container loading">
+        <div id="nexusReportContainer" class="report-container loading">
 
             <!-- Loading -->
             <div class="loading-indicator-container">
@@ -61,7 +61,7 @@
         $(function() {
             'use strict';
             $.request('onInitReportContainer').done(function() {
-                $('#coreReportContainer').removeClass('loading')
+                $('#nexusReportContainer').removeClass('loading')
             })
         });
     </script>

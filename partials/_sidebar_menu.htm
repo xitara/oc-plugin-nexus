@@ -2,13 +2,6 @@
 <?php
     $sideMenuItems = BackendMenu::listSideMenuItems();
 
-    // var_dump($sideMenuItems);
-    // exit;
-
-    // usort((array)$sideMenuItems, function($a, $b) {
-    //     return $a['order'] <=> $b['order'];
-    // });
-
     if ($sideMenuItems):
         $collapsedGroups = explode('|',
         isset($_COOKIE['sidenav_treegroupStatus']) ? $_COOKIE['sidenav_treegroupStatus']
@@ -16,18 +9,9 @@
 
     $categories = [];
     foreach ($sideMenuItems as $sideItemCode => $item) {
-        // var_dump($sideItemCode);
-        // var_dump($item->code);
-        // var_dump($item);
-        // continue;
-
         if (!isset($item->group)) {
-            if (isset($item->attributes['group']) && $item->attributes['group'] != '') {
-                $item->group = $item->attributes['group'];
-            } else {
-                $sub = explode('.', $item->code);
-                $item->group = e(trans('xitara.' . $sub[0] . '::lang.submenu.label'));
-            }
+            $sub = explode('.', $item->code);
+            $item->group = e(trans('xitara.' . $sub[0] . '::lang.submenu.label'));
         }
 
         if (strpos($sideItemCode, 'custommenulist.') !== false) {
@@ -36,21 +20,7 @@
 
             if (isset($item->attributes['groupLabel'])) {
                 $item->group = $item->attributes['groupLabel'];
-            } else {
-
             }
-        }
-
-        if (!property_exists($item, 'keywords')) {
-            $item->keywords = $item->attributes['keywords'] ?? '';
-        }
-
-        if (!property_exists($item, 'description')) {
-            $item->description = $item->attributes['description'] ?? '';
-        }
-
-        if (isset($item->attributes['target'])) {
-            $item->target = $item->attributes['target'];
         }
 
         foreach ($item->permissions as $permission) {
@@ -59,13 +29,6 @@
             }
         }
     }
-
-    // usort($categories, function($a, $b) {
-        // return $a['order'] <=> $b['order'];
-    // });
-
-    // var_dump($categories);
-    // exit;
 ?>
     <ul class="top-level">
     <?php foreach ($categories as $category => $items):
@@ -83,24 +46,27 @@
             <?= $collapsed ? 'data-status="collapsed"' : null; ?>
         >
             <div class="group">
-                <h3>
-                    <?= e(trans($category)); ?>
-                </h3>
+                <h3><?= e(trans($category)); ?></h3>
             </div>
             <ul>
             <?php foreach ($items as $item): ?>
                 <?php if (!isset($item->hidden) || $item->hidden == false): ?>
-                    <li class="<?= BackendMenu::isSideMenuItemActive($item) ? 'active' : null; ?><?= isset($item->attributes['level']) ? ' level-' . $item->attributes['level'] : null; ?><?php if (isset($item->attributes['placeholder'])
-                    && $item->attributes['placeholder'] === true): ?> placeholder<?php endif; ?>"
-                        data-keywords="<?= e(trans($item->keywords)); ?>">
-                        <a href="<?= $item->url; ?>" target="<?= $item->target ?? '_self';?>">
+                    <li class="
+                        <?= BackendMenu::isSideMenuItemActive($item) ? 'active' : null; ?>
+                        level-<?= isset($item->attributes['level']) ? $item->attributes['level'] : 1; ?>
+                        <?= isset($item->attributes['line']) ? ' border-' . $item->attributes['line'] : null; ?>
+                        "
+                        data-keywords="<?= e(trans($item->attributes['keywords'] ?? '')); ?>">
+                        <a href="<?= $item->url; ?>" target="<?= $item->attributes['target'] ?? '_self';?>">
                             <?php if ($item->iconSvg === null): ?>
                                 <i class="sidebar-menu-item <?= $item->icon; ?>"></i>
                             <?php else: ?>
                                 <img src="<?= $item->iconSvg; ?>" style="width: 25px; margin-left: -30px; float: left">
                             <?php endif; ?>
                             <span class="header"><?= e(trans($item->label)); ?></span>
-                            <span class="description"><?= e(trans($item->description)); ?></span>
+                            <span class="description">
+                                <?= e(trans($item->attributes['description'] ?? '')); ?>
+                            </span>
                         </a>
                     </li>
                 <?php endif; ?>

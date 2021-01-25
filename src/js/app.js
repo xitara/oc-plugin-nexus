@@ -1,20 +1,32 @@
+// import 'alpinejs';
+// import Glide from '@glidejs/glide';
+// import GLightbox from 'glightbox';
+import Mark from 'mark.js';
 // import { qs, qsa, $on, $delegate } from './utils';
 import { qs, $on } from './utils';
+import '../scss/styles.scss';
 
-document.addEventListener('DOMContentLoaded', function () {
-    /** mobile nav trigger */
-    if (qs('#mobile-show')) {
-        $on(qs('#mobile-show'), 'click', () => {
-            qs('#mobile-hide').classList.add('active');
-            qs('.sidenav-tree > .layout').classList.add('active');
+$on(document, 'DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const highlight = urlParams.get('highlight');
+
+    /**
+     * highlight search results
+     * active with 'highlight=[TEXT]' as query-paramter
+     */
+    if (highlight !== null) {
+        const instance = new Mark('main');
+        instance.mark(highlight, {
+            separateWordSearch: false,
         });
-    }
-    if (qs('#mobile-hide')) {
-        $on(qs('#mobile-hide'), 'click', () => {
-            qs('#mobile-hide').classList.remove('active');
-            qs('.sidenav-tree > .layout').classList.remove('active');
+
+        /**
+         * scroll first element in center of viewport
+         */
+        qs('mark[data-markjs]').scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'center',
         });
     }
 });
-
-import '../scss/styles.scss';

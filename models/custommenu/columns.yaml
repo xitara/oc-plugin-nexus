@@ -4,25 +4,25 @@
 
 columns:
     name:
-        label: xitara.core::lang.custommenu.name
+        label: xitara.nexus::lang.custommenu.name
         type: text
         searchable: true
         sortable: true
     is_submenu:
-        label: xitara.core::lang.custommenu.is_submenu
+        label: xitara.nexus::lang.custommenu.is_submenu
         type: switch
         width: 10%
     is_active:
-        label: xitara.core::lang.custommenu.is_active
+        label: xitara.nexus::lang.custommenu.is_active
         type: switch
         width: 10%
     created_at:
-        label: xitara.core::core.created_at
+        label: xitara.nexus::nexus.created_at
         type: datetime
         align: center
         width: 15%
     updated_at:
-        label: xitara.core::core.updated_at
+        label: xitara.nexus::nexus.updated_at
         type: datetime
         align: center
         width: 15%

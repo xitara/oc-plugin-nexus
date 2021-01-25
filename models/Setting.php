@@ -1,4 +1,4 @@
-<?php namespace Xitara\Core\Models;
+<?php namespace Xitara\Nexus\Models;
 
 use Model;
 
@@ -8,6 +8,6 @@ use Model;
 class Setting extends Model
 {
     public $implement = ['System.Behaviors.SettingsModel'];
-    public $settingsCode = 'xitara_core_setting';
+    public $settingsCode = 'xitara_nexus_setting';
     public $settingsFields = 'fields.yaml';
 }

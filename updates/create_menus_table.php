@@ -1,4 +1,4 @@
-<?php namespace Xitara\Core\Updates;
+<?php namespace Xitara\Nexus\Updates;
 
 use October\Rain\Database\Schema\Blueprint;
 use October\Rain\Database\Updates\Migration;
@@ -8,7 +8,7 @@ class CreateMenusTable extends Migration
 {
     public function up()
     {
-        Schema::create('xitara_core_menus', function (Blueprint $table) {
+        Schema::create('xitara_nexus_menus', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->string('code', 100)->nullable();
             $table->string('name', 100)->nullable();
@@ -19,6 +19,6 @@ class CreateMenusTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('xitara_core_menus');
+        Schema::dropIfExists('xitara_nexus_menus');
     }
 }

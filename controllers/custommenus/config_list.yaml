@@ -3,16 +3,16 @@
 # ===================================
 
 # Model List Column configuration
-list: $/xitara/core/models/custommenu/columns.yaml
+list: $/xitara/nexus/models/custommenu/columns.yaml
 
 # Model Class name
-modelClass: Xitara\Core\Models\CustomMenu
+modelClass: Xitara\Nexus\Models\CustomMenu
 
 # List Title
 title: Manage CustomMenus
 
 # Link URL for each record
-recordUrl: xitara/core/custommenus/update/:id
+recordUrl: xitara/nexus/custommenus/update/:id
 
 # Message to display if the list is empty
 noRecordsMessage: backend::lang.list.no_records

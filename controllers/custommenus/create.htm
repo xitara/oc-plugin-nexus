@@ -1,6 +1,6 @@
 <?php Block::put('breadcrumb') ?>
     <ul>
-        <li><a href="<?= Backend::url('xitara/core/linklists') ?>">Linklists</a></li>
+        <li><a href="<?= Backend::url('xitara/nexus/linklists') ?>">Linklists</a></li>
         <li><?= e($this->pageTitle) ?></li>
     </ul>
 <?php Block::endPut() ?>
@@ -35,7 +35,7 @@
                     Create and Close
                 </button>
                 <span class="btn-text">
-                    or <a href="<?= Backend::url('xitara/core/linklists') ?>">Cancel</a>
+                    or <a href="<?= Backend::url('xitara/nexus/linklists') ?>">Cancel</a>
                 </span>
             </div>
         </div>
@@ -45,6 +45,6 @@
 <?php else: ?>
 
     <p class="flash-message static error"><?= e($this->fatalError) ?></p>
-    <p><a href="<?= Backend::url('xitara/core/linklists') ?>" class="btn btn-default">Return to linklists list</a></p>
+    <p><a href="<?= Backend::url('xitara/nexus/linklists') ?>" class="btn btn-default">Return to linklists list</a></p>
 
 <?php endif ?>

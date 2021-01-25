@@ -4,40 +4,40 @@
 
 fields:
     name:
-        label: xitara.core::lang.custommenu.name
+        label: xitara.nexus::lang.custommenu.name
         type: text
         span: left
     is_submenu:
-        label: xitara.core::lang.custommenu.is_submenu
+        label: xitara.nexus::lang.custommenu.is_submenu
         type: switch
         span: left
         default: 0
     is_active:
-        label: xitara.core::lang.custommenu.is_active
+        label: xitara.nexus::lang.custommenu.is_active
         type: switch
         span: right
         default: 1
     links:
-        label: xitara.core::lang.custommenu.links
+        label: xitara.nexus::lang.custommenu.links
         type: repeater
         form:
             fields:
                 text:
-                    label: xitara.core::lang.custommenu.text
+                    label: xitara.nexus::lang.custommenu.text
                     type: text
                     span: left
                 link:
-                    label: xitara.core::lang.custommenu.link
+                    label: xitara.nexus::lang.custommenu.link
                     type: text
                     span: right
                 icon:
-                    label: xitara.core::lang.custommenu.icon
-                    comment: xitara.core::lang.custommenu.icon_comment
+                    label: xitara.nexus::lang.custommenu.icon
+                    comment: xitara.nexus::lang.custommenu.icon_comment
                     commentHtml: true
                     type: text
                     span: left
                 icon_image:
-                    label: xitara.core::lang.custommenu.icon
+                    label: xitara.nexus::lang.custommenu.icon
                     type: mediafinder
                     mode: image
                     span: right
@@ -45,13 +45,13 @@ fields:
                     imageWidth: 100
                     imageHeight: 100
                 is_blank:
-                    label: xitara.core::lang.custommenu.is_blank
+                    label: xitara.nexus::lang.custommenu.is_blank
                     type: switch
                     span: storm
                     cssClass: col-md-3
                     default: 1
                 is_active:
-                    label: xitara.core::lang.custommenu.is_active
+                    label: xitara.nexus::lang.custommenu.is_active
                     type: switch
                     span: storm
                     cssClass: col-md-3

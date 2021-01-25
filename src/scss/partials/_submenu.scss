@@ -1,11 +1,29 @@
 $menu-width: 30rem;
 $transition: all 0.3s linear;
 
-/* placeholder */
-li.placeholder {
-    // height: 0;
-    border-bottom: 1px solid #aaa;
+/* borders in li */
+$borders: top, bottom, left, right;
+
+@each $border in $borders {
+    li.border-#{$border} {
+        border-#{$border}: 1px solid #aaa;
+    }
 }
+
+// li.border-top {
+// }
+
+// li.border-top {
+//     border-top: 1px solid #aaa;
+// }
+
+// li.border-top {
+//     border-top: 1px solid #aaa;
+// }
+
+// li.border-top {
+//     border-top: 1px solid #aaa;
+// }
 
 .level-1 {
     padding-left: 1rem;

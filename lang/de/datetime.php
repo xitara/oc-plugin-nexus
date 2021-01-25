@@ -1,4 +1,4 @@
-<?php
+ <?php
 return [
     'monday' => 'Montag',
     'tuesday' => 'Dienstag',
