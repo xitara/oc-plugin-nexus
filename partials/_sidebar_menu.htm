@@ -9,9 +9,8 @@
 
     $categories = [];
     foreach ($sideMenuItems as $sideItemCode => $item) {
-        if (!isset($item->group)) {
-            $sub = explode('.', $item->code);
-            $item->group = e(trans('xitara.' . $sub[0] . '::lang.submenu.label'));
+        if (isset($item->attributes['group'])) {
+            $item->group = e(trans($item->attributes['group']));
         }
 
         if (strpos($sideItemCode, 'custommenulist.') !== false) {
@@ -21,6 +20,11 @@
             if (isset($item->attributes['groupLabel'])) {
                 $item->group = $item->attributes['groupLabel'];
             }
+        }
+
+        if (!isset($item->group)) {
+            $sub = explode('.', $item->code);
+            $item->group = e(trans('xitara.' . $sub[0] . '::lang.submenu.label'));
         }
 
         foreach ($item->permissions as $permission) {

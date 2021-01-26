@@ -1,6 +1,6 @@
 <?php
 return [
-    'config' => 'Konfiguration',
+    'setting' => 'Konfiguration',
     'dashboard' => 'Dashboard',
     'menu' => 'Menu-Sortierung',
     'custommenus' => 'Benutzerdefinierte Menus',

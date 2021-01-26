@@ -4,7 +4,7 @@
 import Mark from 'mark.js';
 // import { qs, qsa, $on, $delegate } from './utils';
 import { qs, $on } from './utils';
-import '../scss/styles.scss';
+// import '../scss/styles.scss';
 
 $on(document, 'DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);

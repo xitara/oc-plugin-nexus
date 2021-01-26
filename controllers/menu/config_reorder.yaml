@@ -3,7 +3,7 @@
 # ===================================
 
 # Reorder Title
-title: xitara.nexus::nexus.menu.reorder
+title: xitara.nexus::core.menu.reorder
 
 # Attribute name
 nameFrom: code
