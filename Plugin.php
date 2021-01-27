@@ -5,7 +5,6 @@ use Backend;
 use BackendMenu;
 use Config;
 use Event;
-use Redirect;
 use Str;
 use System\Classes\PluginBase;
 use System\Classes\PluginManager;
@@ -77,7 +76,7 @@ class Plugin extends PluginBase
             $controller->addJs('/plugins/xitara/nexus/assets/js/backend.js');
 
             if ($controller instanceof Backend\Controllers\Index) {
-                return Redirect::to('/backend/xitara/nexus/dashboard');
+                // return Redirect::to('/backend/xitara/nexus/dashboard');
             }
         });
 
@@ -116,6 +115,10 @@ class Plugin extends PluginBase
     public function registerPermissions()
     {
         return [
+            'xitara.nexus.mainmenu' => [
+                'tab' => 'Xitara Nexus',
+                'label' => 'xitara.nexus::permissions.mainmenu',
+            ],
             'xitara.nexus.setting' => [
                 'tab' => 'Xitara Nexus',
                 'label' => 'xitara.nexus::permissions.setting',
@@ -217,7 +220,10 @@ class Plugin extends PluginBase
                 'url' => Backend::url('xitara/nexus/dashboard'),
                 'icon' => 'icon-dashboard',
                 'order' => 1,
-                'permissions' => ['xitara.nexus.dashboard'],
+                'permissions' => [
+                    'xitara.nexus.mainmenu',
+                    'xitara.nexus.dashboard',
+                ],
                 'attributes' => [
                     'group' => $group,
                 ],

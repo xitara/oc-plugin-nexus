@@ -10,4 +10,6 @@ return [
     'menu_icon_comment' => 'Vorzugsweise ein SVG-Bild, auch Farbig. Mindestgrösse: 30px x 30px',
     'menu_icon_text' => 'Alternativ: Icon aus der OctoberCMS Bibliothek',
     'menu_icon_text_comment' => 'Wird ignoriert, wenn ein Bild hochgeladen wurde. Eine Übersicht gibt es <a href="https://octobercms.com/docs/ui/example/icon" target="_blank">hier</a>',
+    'dashboard_text' => 'Startseite im Backend ohne Dashboard',
+    'dashboard_text_comment' => 'Text auf der Startseite, wenn der User keine Dashboard-Berechtigung hat',
 ];
