@@ -6,12 +6,14 @@ STORAGE=(
     assets
     backend
     classes
+    components
     config
     console
     controllers
     lang
     models
     partials
+    reportwidgets
     updates
     vendor
     plugin.yaml

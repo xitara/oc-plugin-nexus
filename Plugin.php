@@ -2,13 +2,16 @@
 
 use App;
 use Backend;
+use BackendAuth;
 use BackendMenu;
+use Backend\Controllers\Users as UserController;
+use Backend\Models\User;
+use Backend\Models\UserRole;
 use Config;
 use Event;
 use Str;
 use System\Classes\PluginBase;
 use System\Classes\PluginManager;
-use Xitara\Nexus\Classes\TwigFilter;
 use Xitara\Nexus\Models\CustomMenu;
 use Xitara\Nexus\Models\Menu;
 use Xitara\Nexus\Models\Setting as NexusSetting;
@@ -86,6 +89,51 @@ class Plugin extends PluginBase
         Event::listen('backend.menu.extendItems', function ($navigationManager) {
             $navigationManager->removeMainMenuItem('October.Backend', 'dashboard');
         });
+
+        /**
+         * remove roles publisher and developer if user is not an superuser
+         */
+        User::extend(function ($model) {
+            $model->addDynamicMethod('getMyRoleOptions', function ($model) {
+                $result = [];
+
+                $user = BackendAuth::getUser();
+
+                // var_dump($user->is_superuser);
+                // exit;
+
+                if ($user->is_superuser == 1) {
+                    $roles = UserRole::all();
+                }
+
+                if ($user->is_superuser == 0) {
+                    $roles = UserRole::where('is_system', 0)->get();
+                }
+
+                foreach ($roles as $role) {
+                    $result[$role->id] = [$role->name, $role->description];
+                }
+
+                return $result;
+            });
+        });
+
+        UserController::extendFormFields(function ($form, $model) {
+            if (!$model instanceof User) {
+                return;
+            }
+
+            $role = $form->getField('role');
+            $role->options = 'getMyRoleOptions';
+
+            // var_dump($role->config);
+            // exit;
+
+            $form->removeField('role');
+            $form->addTabFields(['role' => $role->config]);
+
+        });
+
     }
 
     public function registerSettings()
@@ -335,24 +383,24 @@ class Plugin extends PluginBase
         return $inject;
     }
 
-    public function registerMarkupTags()
-    {
-        $twigfilter = new TwigFilter;
+    // public function registerMarkupTags()
+    // {
+    //     $twigfilter = new TwigFilter;
 
-        return [
-            'filters' => [
-                'phone_link' => [$twigfilter, 'filterPhoneLink'],
-                'email_link' => [$twigfilter, 'filterEmailLink'],
-                'mediadata' => [$twigfilter, 'filterMediaData'],
-                'filesize' => [$twigfilter, 'filterFileSize'],
-                'regex_replace' => [$twigfilter, 'filterRegexReplace'],
-                'slug' => 'str_slug',
-                'strip_html' => [$twigfilter, 'filterStripHtml'],
-                'truncate_html' => [$twigfilter, 'filterTruncateHtml'],
-            ],
-            'functions' => [
-                'uid' => [$twigfilter, 'functionGenerateUid'],
-            ],
-        ];
-    }
+    //     return [
+    //         'filters' => [
+    //             'phone_link' => [$twigfilter, 'filterPhoneLink'],
+    //             'email_link' => [$twigfilter, 'filterEmailLink'],
+    //             'mediadata' => [$twigfilter, 'filterMediaData'],
+    //             'filesize' => [$twigfilter, 'filterFileSize'],
+    //             'regex_replace' => [$twigfilter, 'filterRegexReplace'],
+    //             'slug' => 'str_slug',
+    //             'strip_html' => [$twigfilter, 'filterStripHtml'],
+    //             'truncate_html' => [$twigfilter, 'filterTruncateHtml'],
+    //         ],
+    //         'functions' => [
+    //             'uid' => [$twigfilter, 'functionGenerateUid'],
+    //         ],
+    //     ];
+    // }
 }
