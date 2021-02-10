@@ -4,11 +4,12 @@ use App;
 use Backend;
 use BackendAuth;
 use BackendMenu;
-use Backend\Controllers\Users as UserController;
+use Backend\Controllers\Users;
 use Backend\Models\User;
 use Backend\Models\UserRole;
 use Config;
 use Event;
+use Redirect;
 use Str;
 use System\Classes\PluginBase;
 use System\Classes\PluginManager;
@@ -79,7 +80,7 @@ class Plugin extends PluginBase
             $controller->addJs('/plugins/xitara/nexus/assets/js/backend.js');
 
             if ($controller instanceof Backend\Controllers\Index) {
-                // return Redirect::to('/backend/xitara/nexus/dashboard');
+                return Redirect::to('/backend/xitara/nexus/dashboard');
             }
         });
 
@@ -99,9 +100,6 @@ class Plugin extends PluginBase
 
                 $user = BackendAuth::getUser();
 
-                // var_dump($user->is_superuser);
-                // exit;
-
                 if ($user->is_superuser == 1) {
                     $roles = UserRole::all();
                 }
@@ -118,22 +116,45 @@ class Plugin extends PluginBase
             });
         });
 
-        UserController::extendFormFields(function ($form, $model) {
-            if (!$model instanceof User) {
+        Event::listen('backend.form.extendFieldsBefore', function ($widget) {
+            if (!($widget->getController() instanceof Users && $widget->model instanceof User)) {
                 return;
             }
 
-            $role = $form->getField('role');
-            $role->options = 'getMyRoleOptions';
-
-            // var_dump($role->config);
-            // exit;
-
-            $form->removeField('role');
-            $form->addTabFields(['role' => $role->config]);
-
+            $widget->tabs['fields']['role']['options'] = 'getMyRoleOptions';
         });
 
+        /**
+         * add new toolbor for disable group and permission tab for non superuser
+         */
+        Users::extend(function ($controller) {
+            $controller->listConfig = $controller->makeConfig($controller->listConfig);
+            $controller->listConfig->toolbar = array_merge($controller->listConfig->toolbar, ['buttons' => '$/xitara/nexus/partials/toolbar.users.htm']);
+        });
+
+        /**
+         * remove groups and permission columns from non superuser
+         */
+        Users::extendListColumns(function ($list, $model) {
+            if (BackendAuth::getUser()->isSuperUser()) {
+                return;
+            }
+
+            $list->removeColumn('permissions');
+            $list->removeColumn('groups');
+        });
+
+        /**
+         * remove groups and permission tabs from non superuser
+         */
+        Users::extendFormFields(function ($form, $model, $context) {
+            if (BackendAuth::getUser()->isSuperUser()) {
+                return;
+            }
+
+            $form->removeField('permissions');
+            $form->removeField('groups');
+        });
     }
 
     public function registerSettings()
