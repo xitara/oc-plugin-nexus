@@ -89,4 +89,6 @@ return [
     'year_s' => 'Jahr(e)',
     'zip' => 'PLZ',
     'check_for_error' => 'auf Fehler prüfen',
+    'user' => 'User',
+    'filename' => 'Filename',
 ];
