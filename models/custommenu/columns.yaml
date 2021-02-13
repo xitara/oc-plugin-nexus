@@ -17,12 +17,12 @@ columns:
         type: switch
         width: 10%
     created_at:
-        label: xitara.nexus::nexus.created_at
+        label: xitara.nexus::core.created_at
         type: datetime
         align: center
         width: 15%
     updated_at:
-        label: xitara.nexus::nexus.updated_at
+        label: xitara.nexus::core.updated_at
         type: datetime
         align: center
         width: 15%

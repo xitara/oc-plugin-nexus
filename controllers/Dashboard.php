@@ -85,8 +85,10 @@ class Dashboard extends Controller
      */
     protected function checkPermissionRedirect()
     {
-        if (!$this->user->hasAccess('xitara.nexus.dashboard')) {
+        if (!$this->user->hasAccess('xitara.nexus.dashboard') && !$this->user->hasAccess('xitara.nexus.show')) {
+
             $true = function () {return true;};
+
             if ($first = array_first(BackendMenu::listMainMenuItems(), $true)) {
                 return Redirect::intended($first->url);
             }

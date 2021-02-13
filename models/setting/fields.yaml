@@ -27,3 +27,10 @@ fields:
         span: right
         comment: xitara.nexus::setting.menu_icon_text_comment
         commentHtml: true
+    dashboard_text:
+        label: xitara.nexus::setting.dashboard_text
+        type: richeditor
+        span: full
+        size: huge
+        comment: xitara.nexus::setting.dashboard_text_comment
+        commentHtml: true

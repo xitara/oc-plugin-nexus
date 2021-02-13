@@ -145,7 +145,7 @@ and as registration method
 public function registerSettings()
 {
     if (($category = Setting::get('menu_text')) == '') {
-        $category = 'xitara.nexus::nexus.setting.name';
+        $category = 'xitara.nexus::core.setting.name';
     }
 
     return [

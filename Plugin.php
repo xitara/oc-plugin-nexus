@@ -2,14 +2,17 @@
 
 use App;
 use Backend;
+use BackendAuth;
 use BackendMenu;
+use Backend\Controllers\Users;
+use Backend\Models\User;
+use Backend\Models\UserRole;
 use Config;
 use Event;
 use Redirect;
 use Str;
 use System\Classes\PluginBase;
 use System\Classes\PluginManager;
-use Xitara\Nexus\Classes\TwigFilter;
 use Xitara\Nexus\Models\CustomMenu;
 use Xitara\Nexus\Models\Menu;
 use Xitara\Nexus\Models\Setting as NexusSetting;
@@ -71,6 +74,7 @@ class Plugin extends PluginBase
                 $controller->addCss('/plugins/xitara/nexus/assets/css/compact.css');
             }
 
+            $controller->addCss('/plugins/xitara/nexus/assets/css/app.css');
             $controller->addCss('/plugins/xitara/nexus/assets/css/darkmode.css');
             // $controller->addCss('/plugins/xitara/nexus/assets/css/app.css');
             $controller->addJs('/plugins/xitara/nexus/assets/js/backend.js');
@@ -85,6 +89,71 @@ class Plugin extends PluginBase
          */
         Event::listen('backend.menu.extendItems', function ($navigationManager) {
             $navigationManager->removeMainMenuItem('October.Backend', 'dashboard');
+        });
+
+        /**
+         * remove roles publisher and developer if user is not an superuser
+         */
+        User::extend(function ($model) {
+            $model->addDynamicMethod('getMyRoleOptions', function ($model) {
+                $result = [];
+
+                $user = BackendAuth::getUser();
+
+                if ($user->is_superuser == 1) {
+                    $roles = UserRole::all();
+                }
+
+                if ($user->is_superuser == 0) {
+                    $roles = UserRole::where('is_system', 0)->get();
+                }
+
+                foreach ($roles as $role) {
+                    $result[$role->id] = [$role->name, $role->description];
+                }
+
+                return $result;
+            });
+        });
+
+        Event::listen('backend.form.extendFieldsBefore', function ($widget) {
+            if (!($widget->getController() instanceof Users && $widget->model instanceof User)) {
+                return;
+            }
+
+            $widget->tabs['fields']['role']['options'] = 'getMyRoleOptions';
+        });
+
+        /**
+         * add new toolbor for disable group and permission tab for non superuser
+         */
+        Users::extend(function ($controller) {
+            $controller->listConfig = $controller->makeConfig($controller->listConfig);
+            $controller->listConfig->toolbar = array_merge($controller->listConfig->toolbar, ['buttons' => '$/xitara/nexus/partials/toolbar.users.htm']);
+        });
+
+        /**
+         * remove groups and permission columns from non superuser
+         */
+        Users::extendListColumns(function ($list, $model) {
+            if (BackendAuth::getUser()->isSuperUser()) {
+                return;
+            }
+
+            $list->removeColumn('permissions');
+            $list->removeColumn('groups');
+        });
+
+        /**
+         * remove groups and permission tabs from non superuser
+         */
+        Users::extendFormFields(function ($form, $model, $context) {
+            if (BackendAuth::getUser()->isSuperUser()) {
+                return;
+            }
+
+            $form->removeField('permissions');
+            $form->removeField('groups');
         });
     }
 
@@ -115,6 +184,10 @@ class Plugin extends PluginBase
     public function registerPermissions()
     {
         return [
+            'xitara.nexus.mainmenu' => [
+                'tab' => 'Xitara Nexus',
+                'label' => 'xitara.nexus::permissions.mainmenu',
+            ],
             'xitara.nexus.setting' => [
                 'tab' => 'Xitara Nexus',
                 'label' => 'xitara.nexus::permissions.setting',
@@ -216,7 +289,10 @@ class Plugin extends PluginBase
                 'url' => Backend::url('xitara/nexus/dashboard'),
                 'icon' => 'icon-dashboard',
                 'order' => 1,
-                'permissions' => ['xitara.nexus.dashboard'],
+                'permissions' => [
+                    'xitara.nexus.mainmenu',
+                    'xitara.nexus.dashboard',
+                ],
                 'attributes' => [
                     'group' => $group,
                 ],
@@ -328,24 +404,24 @@ class Plugin extends PluginBase
         return $inject;
     }
 
-    public function registerMarkupTags()
-    {
-        $twigfilter = new TwigFilter;
+    // public function registerMarkupTags()
+    // {
+    //     $twigfilter = new TwigFilter;
 
-        return [
-            'filters' => [
-                'phone_link' => [$twigfilter, 'filterPhoneLink'],
-                'email_link' => [$twigfilter, 'filterEmailLink'],
-                'mediadata' => [$twigfilter, 'filterMediaData'],
-                'filesize' => [$twigfilter, 'filterFileSize'],
-                'regex_replace' => [$twigfilter, 'filterRegexReplace'],
-                'slug' => 'str_slug',
-                'strip_html' => [$twigfilter, 'filterStripHtml'],
-                'truncate_html' => [$twigfilter, 'filterTruncateHtml'],
-            ],
-            'functions' => [
-                'uid' => [$twigfilter, 'functionGenerateUid'],
-            ],
-        ];
-    }
+    //     return [
+    //         'filters' => [
+    //             'phone_link' => [$twigfilter, 'filterPhoneLink'],
+    //             'email_link' => [$twigfilter, 'filterEmailLink'],
+    //             'mediadata' => [$twigfilter, 'filterMediaData'],
+    //             'filesize' => [$twigfilter, 'filterFileSize'],
+    //             'regex_replace' => [$twigfilter, 'filterRegexReplace'],
+    //             'slug' => 'str_slug',
+    //             'strip_html' => [$twigfilter, 'filterStripHtml'],
+    //             'truncate_html' => [$twigfilter, 'filterTruncateHtml'],
+    //         ],
+    //         'functions' => [
+    //             'uid' => [$twigfilter, 'functionGenerateUid'],
+    //         ],
+    //     ];
+    // }
 }
