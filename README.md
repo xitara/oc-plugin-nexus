@@ -144,7 +144,7 @@ and as registration method
 ```php
 public function registerSettings()
 {
-    if (($category = Setting::get('menu_text')) == '') {
+    if (($category = Settings::get('menu_text')) == '') {
         $category = 'xitara.nexus::core.setting.name';
     }
 
@@ -154,7 +154,7 @@ public function registerSettings()
             'label' => '[VENDOR_SLUG].[PLUGIN_SLUG]::lang.submenu.label',
             'description' => '[VENDOR_SLUG].[PLUGIN_SLUG]::lang.submenu.description',
             'icon' => 'icon-comments-o',
-            'class' => '[VENDOR]\[PLUGIN]\Models\Setting',
+            'class' => '[VENDOR]\[PLUGIN]\Models\Settings',
             'order' => 20,
         ],
     ];

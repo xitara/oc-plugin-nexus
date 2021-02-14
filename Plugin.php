@@ -13,9 +13,10 @@ use Redirect;
 use Str;
 use System\Classes\PluginBase;
 use System\Classes\PluginManager;
+use Xitara\Nexus\Classes\TwigFilter;
 use Xitara\Nexus\Models\CustomMenu;
 use Xitara\Nexus\Models\Menu;
-use Xitara\Nexus\Models\Setting as NexusSetting;
+use Xitara\Nexus\Models\Settings as NexusSettings;
 
 class Plugin extends PluginBase
 {
@@ -70,7 +71,7 @@ class Plugin extends PluginBase
         $this->getSideMenu('Xitara.Nexus', 'nexus');
 
         Event::listen('backend.page.beforeDisplay', function ($controller, $action, $params) {
-            if (NexusSetting::get('compact_display')) {
+            if (NexusSettings::get('is_compact_display')) {
                 $controller->addCss('/plugins/xitara/nexus/assets/css/compact.css');
             }
 
@@ -159,19 +160,19 @@ class Plugin extends PluginBase
 
     public function registerSettings()
     {
-        if (($category = NexusSetting::get('menu_text')) == '') {
-            $category = 'xitara.nexus::core.setting.name';
+        if (($category = NexusSettings::get('menu_text')) == '') {
+            $category = 'xitara.nexus::core.settings.name';
         }
 
         return [
             'settings' => [
                 'category' => $category,
-                'label' => 'xitara.nexus::lang.setting.label',
-                'description' => 'xitara.nexus::lang.setting.description',
+                'label' => 'xitara.nexus::lang.settings.label',
+                'description' => 'xitara.nexus::lang.settings.description',
                 'icon' => 'icon-wrench',
-                'class' => 'Xitara\Nexus\Models\Setting',
+                'class' => 'Xitara\Nexus\Models\Settings',
                 'order' => 0,
-                'permissions' => ['xitara.nexus.setting'],
+                'permissions' => ['xitara.nexus.settings'],
             ],
         ];
     }
@@ -188,9 +189,9 @@ class Plugin extends PluginBase
                 'tab' => 'Xitara Nexus',
                 'label' => 'xitara.nexus::permissions.mainmenu',
             ],
-            'xitara.nexus.setting' => [
+            'xitara.nexus.settings' => [
                 'tab' => 'Xitara Nexus',
-                'label' => 'xitara.nexus::permissions.setting',
+                'label' => 'xitara.nexus::permissions.settings',
             ],
             'xitara.nexus.dashboard' => [
                 'tab' => 'Xitara Nexus',
@@ -214,14 +215,14 @@ class Plugin extends PluginBase
      */
     public function registerNavigation()
     {
-        $iconSvg = NexusSetting::get('menu_icon');
-        if ($iconSvg == '' && NexusSetting::get('menu_icon_text', '') == '') {
+        $iconSvg = NexusSettings::get('menu_icon');
+        if ($iconSvg == '' && NexusSettings::get('menu_icon_text', '') == '') {
             $iconSvg = 'plugins/xitara/nexus/assets/images/icon-nexus.svg';
         } elseif ($iconSvg != '') {
             $iconSvg = url(Config::get('cms.storage.media.path') . $iconSvg);
         }
 
-        if (($label = NexusSetting::get('menu_text')) == '') {
+        if (($label = NexusSettings::get('menu_text')) == '') {
             $label = 'xitara.nexus::lang.submenu.label';
         }
 
@@ -229,7 +230,7 @@ class Plugin extends PluginBase
             'nexus' => [
                 'label' => $label,
                 'url' => Backend::url('xitara/nexus/dashboard'),
-                'icon' => NexusSetting::get('menu_icon_text', 'icon-leaf'),
+                'icon' => NexusSettings::get('menu_icon_text', 'icon-leaf'),
                 'iconSvg' => $iconSvg,
                 'permissions' => ['xitara.nexus.*'],
                 'order' => 50,
@@ -277,8 +278,8 @@ class Plugin extends PluginBase
      */
     public static function getSideMenu(string $owner, string $code)
     {
-        // Log::debug(NexusSetting::get('menu_text'));
-        if (($group = NexusSetting::get('menu_text')) == '') {
+        // Log::debug(NexusSettings::get('menu_text'));
+        if (($group = NexusSettings::get('menu_text')) == '') {
             $group = 'xitara.nexus::lang.submenu.label';
         }
         // Log::debug($group);
@@ -404,24 +405,41 @@ class Plugin extends PluginBase
         return $inject;
     }
 
-    // public function registerMarkupTags()
-    // {
-    //     $twigfilter = new TwigFilter;
+    public function registerComponents()
+    {
+        return [
+            'Xitara\Nexus\Components\FontAwsome' => 'fontAwsome',
+        ];
+    }
 
-    //     return [
-    //         'filters' => [
-    //             'phone_link' => [$twigfilter, 'filterPhoneLink'],
-    //             'email_link' => [$twigfilter, 'filterEmailLink'],
-    //             'mediadata' => [$twigfilter, 'filterMediaData'],
-    //             'filesize' => [$twigfilter, 'filterFileSize'],
-    //             'regex_replace' => [$twigfilter, 'filterRegexReplace'],
-    //             'slug' => 'str_slug',
-    //             'strip_html' => [$twigfilter, 'filterStripHtml'],
-    //             'truncate_html' => [$twigfilter, 'filterTruncateHtml'],
-    //         ],
-    //         'functions' => [
-    //             'uid' => [$twigfilter, 'functionGenerateUid'],
-    //         ],
-    //     ];
-    // }
+    public function registerMarkupTags()
+    {
+        $twigfilter = new TwigFilter;
+
+        $filters = [];
+
+        if (NexusSettings::get('is_twig_filters')) {
+            $filters = [
+                'phone_link' => [$twigfilter, 'filterPhoneLink'],
+                'email_link' => [$twigfilter, 'filterEmailLink'],
+                'mediadata' => [$twigfilter, 'filterMediaData'],
+                'filesize' => [$twigfilter, 'filterFileSize'],
+                'regex_replace' => [$twigfilter, 'filterRegexReplace'],
+                'slug' => 'str_slug',
+                'strip_html' => [$twigfilter, 'filterStripHtml'],
+                'truncate_html' => [$twigfilter, 'filterTruncateHtml'],
+            ];
+
+            $functions = [
+                'uid' => [$twigfilter, 'functionGenerateUid'],
+            ];
+        }
+
+        $filters['fa'] = [$twigfilter, 'filterFontAwesome'];
+
+        return [
+            'filters' => $filters,
+            'functions' => $functions,
+        ];
+    }
 }

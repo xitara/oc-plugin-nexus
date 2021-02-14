@@ -1,0 +1,41 @@
+fields:
+    main_menu:
+        label: xitara.nexus::settings.main_menu
+        type: section
+        comment: xitara.nexus::settings.main_menu_comment
+    is_compact_display:
+        label: xitara.nexus::settings.is_compact_display
+        type: switch
+        span: left
+        comment: xitara.nexus::settings.is_compact_display_comment
+    is_twig_filters:
+        label: xitara.nexus::settings.is_twig_filters
+        type: switch
+        span: right
+        comment: xitara.nexus::settings.is_twig_filters_comment
+    menu_text:
+        label: xitara.nexus::settings.menu_text
+        type: text
+        span: left
+        comment: xitara.nexus::settings.menu_text_comment
+    menu_icon:
+        label: xitara.nexus::settings.menu_icon
+        type: mediafinder
+        mode: image
+        imageWidth: 100
+        imageHeight: 100
+        span: left
+        comment: xitara.nexus::settings.menu_icon_comment
+    menu_icon_text:
+        label: xitara.nexus::settings.menu_icon_text
+        type: text
+        span: right
+        comment: xitara.nexus::settings.menu_icon_text_comment
+        commentHtml: true
+    dashboard_text:
+        label: xitara.nexus::settings.dashboard_text
+        type: richeditor
+        span: full
+        size: huge
+        comment: xitara.nexus::settings.dashboard_text_comment
+        commentHtml: true
