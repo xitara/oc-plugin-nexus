@@ -15,7 +15,7 @@
     Block::put('body');
 
     if ($this->user->hasAccess('xitara.nexus.dashboard')) :
-        if (\Xitara\Nexus\Models\Setting::get('timezone', true) === false):
+        if (\Xitara\Nexus\Models\Settings::get('timezone', true) === false):
 ?>
     <div class="callout fade in callout-danger">
         <button

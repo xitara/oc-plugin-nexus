@@ -7,19 +7,19 @@ fi
 
 # set link to webfonts in fa
 if [ -d "$(pwd)/node_modules/@fortawesome/fontawesome-free" ]; then
-    if [ ! -d "$(pwd)/static/assets/fonts" ]; then
+    if [ ! -L "$(pwd)/static/assets/fonts" ]; then
         ln -s \
             $(pwd)/node_modules/@fortawesome/fontawesome-free/webfonts \
             $(pwd)/static/assets/fonts
     fi
 
-    if [ ! -d "$(pwd)/static/assets/sprites" ]; then
+    if [ ! -L "$(pwd)/static/assets/sprites" ]; then
         ln -s \
             $(pwd)/node_modules/@fortawesome/fontawesome-free/sprites \
             $(pwd)/static/assets/sprites
     fi
 
-    if [ ! -d "$(pwd)/static/assets/svgs" ]; then
+    if [ ! -L "$(pwd)/static/assets/svgs" ]; then
         ln -s \
             $(pwd)/node_modules/@fortawesome/fontawesome-free/svgs \
             $(pwd)/static/assets/svgs

@@ -11,7 +11,7 @@ module.exports = {
         'app': `./js/app.js`,
         'pwa': `./js/pwa.js`,
         'backend': `./js/backend.js`,
-        // 'darkmode': `./scss/darkmode.scss`,
+        'darkmode': `./scss/darkmode.scss`,
         'compact': `./scss/compact.scss`,
 
         'fontawesome': `./scss/fa/fontawesome.scss`,
