@@ -5,7 +5,7 @@ use Model;
 /**
  * Config Model
  */
-class Setting extends Model
+class Settings extends Model
 {
     public $implement = ['System.Behaviors.SettingsModel'];
     public $settingsCode = 'xitara_nexus_setting';
