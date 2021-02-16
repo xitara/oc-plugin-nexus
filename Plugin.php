@@ -417,6 +417,7 @@ class Plugin extends PluginBase
         $twigfilter = new TwigFilter;
 
         $filters = [];
+        $functions = [];
 
         if (NexusSettings::get('is_twig_filters')) {
             $filters = [
