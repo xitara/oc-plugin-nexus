@@ -13,6 +13,7 @@ use Redirect;
 use Str;
 use System\Classes\PluginBase;
 use System\Classes\PluginManager;
+use Xitara\Nexus\Classes\TwigFilter;
 use Xitara\Nexus\Models\CustomMenu;
 use Xitara\Nexus\Models\Menu;
 use Xitara\Nexus\Models\Settings as NexusSettings;
@@ -70,7 +71,7 @@ class Plugin extends PluginBase
         $this->getSideMenu('Xitara.Nexus', 'nexus');
 
         Event::listen('backend.page.beforeDisplay', function ($controller, $action, $params) {
-            if (NexusSettings::get('compact_display')) {
+            if (NexusSettings::get('is_compact_display')) {
                 $controller->addCss('/plugins/xitara/nexus/assets/css/compact.css');
             }
 
@@ -404,24 +405,41 @@ class Plugin extends PluginBase
         return $inject;
     }
 
-    // public function registerMarkupTags()
-    // {
-    //     $twigfilter = new TwigFilter;
+    public function registerComponents()
+    {
+        return [
+            'Xitara\Nexus\Components\FontAwsome' => 'fontAwsome',
+        ];
+    }
 
-    //     return [
-    //         'filters' => [
-    //             'phone_link' => [$twigfilter, 'filterPhoneLink'],
-    //             'email_link' => [$twigfilter, 'filterEmailLink'],
-    //             'mediadata' => [$twigfilter, 'filterMediaData'],
-    //             'filesize' => [$twigfilter, 'filterFileSize'],
-    //             'regex_replace' => [$twigfilter, 'filterRegexReplace'],
-    //             'slug' => 'str_slug',
-    //             'strip_html' => [$twigfilter, 'filterStripHtml'],
-    //             'truncate_html' => [$twigfilter, 'filterTruncateHtml'],
-    //         ],
-    //         'functions' => [
-    //             'uid' => [$twigfilter, 'functionGenerateUid'],
-    //         ],
-    //     ];
-    // }
+    public function registerMarkupTags()
+    {
+        $twigfilter = new TwigFilter;
+
+        $filters = [];
+
+        if (NexusSettings::get('is_twig_filters')) {
+            $filters = [
+                'phone_link' => [$twigfilter, 'filterPhoneLink'],
+                'email_link' => [$twigfilter, 'filterEmailLink'],
+                'mediadata' => [$twigfilter, 'filterMediaData'],
+                'filesize' => [$twigfilter, 'filterFileSize'],
+                'regex_replace' => [$twigfilter, 'filterRegexReplace'],
+                'slug' => 'str_slug',
+                'strip_html' => [$twigfilter, 'filterStripHtml'],
+                'truncate_html' => [$twigfilter, 'filterTruncateHtml'],
+            ];
+
+            $functions = [
+                'uid' => [$twigfilter, 'functionGenerateUid'],
+            ];
+        }
+
+        $filters['fa'] = [$twigfilter, 'filterFontAwesome'];
+
+        return [
+            'filters' => $filters,
+            'functions' => $functions,
+        ];
+    }
 }

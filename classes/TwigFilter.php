@@ -213,6 +213,24 @@ class TwigFilter
      */
     public function functionGenerateUid()
     {
-        return uniqid();
+        return uniqid(rand(), true);
+    }
+
+    /**
+     * fa() - generates full path to fa-sprites
+     *
+     * @autor   mburghammer
+     * @date    2021-02-14T00:22:14+01:00
+     * @version 0.0.1
+     * @since   0.0.1
+     * @return  string      sprite with full path
+     */
+    public function filterFontAwesome($icon, $collection = null)
+    {
+        if ($collection === null) {
+            $collection = \Xitara\Nexus\Components\FontAwsome::getDefaultSprite();
+        }
+
+        return plugins_url('xitara/nexus/assets/sprites/' . $collection . '.svg#' . $icon);
     }
 }

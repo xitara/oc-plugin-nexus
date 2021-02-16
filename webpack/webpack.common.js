@@ -2,7 +2,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const BrotliPlugin = require('brotli-webpack-plugin');
-const TailwindCSS = require('tailwindcss');
+// const TailwindCSS = require('tailwindcss');
 const paths = require('./paths');
 
 module.exports = {
@@ -11,8 +11,14 @@ module.exports = {
         'app': `./js/app.js`,
         'pwa': `./js/pwa.js`,
         'backend': `./js/backend.js`,
-        // 'darkmode': `./scss/darkmode.scss`,
+        'darkmode': `./scss/darkmode.scss`,
         'compact': `./scss/compact.scss`,
+
+        'fontawesome': `./scss/fa/fontawesome.scss`,
+        'brands': `./scss/fa/brands.scss`,
+        'solid': `./scss/fa/solid.scss`,
+        'regular': `./scss/fa/regular.scss`,
+
     },
     output: {
         filename: `assets/js/[name].js`,
@@ -42,14 +48,14 @@ module.exports = {
                             postcssOptions: {
                                 sourceMap: true,
                                 plugins: [
-                                    require('tailwindcss'),
+                                    // require('tailwindcss'),
                                     require('autoprefixer'),
                                     require('postcss-flexbugs-fixes'),
                                 ],
-                                postCss: [
-                                    TailwindCSS('tailwind.config.js'),
-                                ],
-                                processCssUrls: false,
+                                // postCss: [
+                                    // TailwindCSS('tailwind.config.js'),
+                                // ],
+                                // processCssUrls: false,
                             },
                         },
                     },
