@@ -158,14 +158,14 @@ class Plugin extends PluginBase
         });
     }
 
-    public function registerSettingss()
+    public function registerSettings()
     {
         if (($category = NexusSettings::get('menu_text')) == '') {
             $category = 'xitara.nexus::core.settings.name';
         }
 
         return [
-            'settingss' => [
+            'settings' => [
                 'category' => $category,
                 'label' => 'xitara.nexus::lang.settings.label',
                 'description' => 'xitara.nexus::lang.settings.description',

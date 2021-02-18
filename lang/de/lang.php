@@ -14,7 +14,7 @@ return [
         'dashboard' => 'Dashboard',
         'menu' => 'Menü-Sortierung',
     ],
-    'setting' => [
+    'settings' => [
         'label' => 'Grundeinstellungen',
         'description' => 'Einstellungen global für alle Plugins',
     ],
