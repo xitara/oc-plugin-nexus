@@ -429,6 +429,8 @@ class Plugin extends PluginBase
                 'slug' => 'str_slug',
                 'strip_html' => [$twigfilter, 'filterStripHtml'],
                 'truncate_html' => [$twigfilter, 'filterTruncateHtml'],
+                'inject' => [$twigfilter, 'filterInject'],
+                'image_text' => [$twigfilter, 'filterAddImageText'],
             ];
 
             $functions = [

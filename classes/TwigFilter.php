@@ -203,6 +203,95 @@ class TwigFilter
     }
 
     /**
+     * inject filecontent directly inside html. useful for svg or so - |inject
+     * @param  string $text filename relative to project root
+     * @return string       content of file
+     */
+    public function filterInject(string $text): string
+    {
+        $file = file_get_contents(realpath(base_path($text)));
+        return $file;
+    }
+
+    /**
+     * adds alt and optional title attributes - |image_text
+     *
+     * options: {
+     *     'first': 'title|description', // outputs title or description as default. default: title
+     *     'alt': true|false, // show alt-attribute, default: true
+     *     'title': true|false, // show title-attribute, default: false
+     *     'default': { // optional. will be used if image has no title and description
+     *         title: 'Foo',
+     *         description: 'Bar',
+     *     }
+     * }
+     *
+     * @param  object $image   image object from attached image
+     * @param  array $options some optional options
+     * @return string          prefixed text with $art
+     */
+    public function filterAddImageText($image, $options = null): string
+    {
+        if ($image === null) {
+            return '';
+        }
+
+        $alt = $title = null;
+
+        /**
+         * generate alt, display as default -> alt: false
+         */
+        if ($options['alt'] ?? true === true) {
+            $alt = $this->checkImageText($image, $options, 'alt');
+        }
+
+        /**
+         * generate title, display as option -> title: true
+         */
+        if ($options['title'] ?? false === true) {
+            $title = $this->checkImageText($image, $options, 'title');
+        }
+
+        return $alt . $title;
+    }
+
+    /**
+     * adds alt or title text and return prefixed string
+     *
+     * @see self::filterAddImageText()
+     * @param  object $image   image object from attached image
+     * @param  array $options some optional options
+     * @param  string $art     alt or title
+     * @return string          prefixed text with $art
+     */
+    private function checkImageText($image, $options, $art)
+    {
+        $text = $options['default']['description'] ?? '';
+
+        if (isset($image->description) && $image->description != '') {
+            $text = Html::strip($image->description);
+        }
+
+        if ($text == '') {
+            $text = $options['default']['title'] ?? '';
+        }
+
+        if (isset($image->title)
+            && $image->title !== null
+            && $image->title != ''
+            && ($text == '' || ($options['first'] ?? 'title') == 'title')
+        ) {
+            $text = Html::strip($image->title);
+        }
+
+        if ($text != '') {
+            $text = ' ' . $art . '="' . $text . '"';
+        }
+
+        return $text;
+    }
+
+    /**
      * uid() - generates a unique id
      *
      * @autor   mburghammer
