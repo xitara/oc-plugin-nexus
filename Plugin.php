@@ -66,6 +66,11 @@ class Plugin extends PluginBase
         Config::set('cms.backendSkin', 'Xitara\Nexus\Classes\BackendSkin');
 
         /**
+         * include helpers
+         */
+        include_once dirname(__FILE__) . '/' . 'helpers.php';
+
+        /**
          * add items to sidemenu
          */
         $this->getSideMenu('Xitara.Nexus', 'nexus');
