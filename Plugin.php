@@ -81,7 +81,7 @@ class Plugin extends PluginBase
             }
 
             $controller->addCss('/plugins/xitara/nexus/assets/css/app.css');
-            $controller->addCss('/plugins/xitara/nexus/assets/css/darkmode.css');
+            // $controller->addCss('/plugins/xitara/nexus/assets/css/darkmode.css');
             // $controller->addCss('/plugins/xitara/nexus/assets/css/app.css');
             $controller->addJs('/plugins/xitara/nexus/assets/js/backend.js');
 
@@ -220,11 +220,13 @@ class Plugin extends PluginBase
      */
     public function registerNavigation()
     {
-        $iconSvg = NexusSettings::get('menu_icon');
-        if ($iconSvg == '' && NexusSettings::get('menu_icon_text', '') == '') {
+        $nexus = NexusSettings::instance();
+        $iconSvg = '';
+
+        if ($nexus->menu_icon_uploaded) {
+            $iconSvg = $nexus->menu_icon_uploaded->getPath();
+        } elseif (NexusSettings::get('menu_icon_text', '') == '') {
             $iconSvg = 'plugins/xitara/nexus/assets/images/icon-nexus.svg';
-        } elseif ($iconSvg != '') {
-            $iconSvg = url(Config::get('cms.storage.media.path') . $iconSvg);
         }
 
         if (($label = NexusSettings::get('menu_text')) == '') {

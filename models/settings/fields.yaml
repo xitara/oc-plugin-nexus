@@ -13,12 +13,10 @@ fields:
         type: switch
         span: right
         comment: xitara.nexus::settings.is_compact_display_comment
-    menu_icon:
+    menu_icon_uploaded:
         label: xitara.nexus::settings.menu_icon
-        type: mediafinder
+        type: fileupload
         mode: image
-        imageWidth: 100
-        imageHeight: 100
         span: left
         comment: xitara.nexus::settings.menu_icon_comment
     menu_icon_text:
