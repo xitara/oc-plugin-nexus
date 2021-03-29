@@ -54,6 +54,7 @@ return [
     'group' => 'Gruppe',
     'groups' => 'Gruppen',
     'heading' => 'Überschrift',
+    'subheading' => 'Unterüberschrift',
     'height' => 'Höhe',
     'horizontal' => 'Horizontal',
     'hour_s' => 'Stunde(n)',

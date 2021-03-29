@@ -76,7 +76,7 @@ class Plugin extends PluginBase
             }
 
             $controller->addCss('/plugins/xitara/nexus/assets/css/app.css');
-            $controller->addCss('/plugins/xitara/nexus/assets/css/darkmode.css');
+            // $controller->addCss('/plugins/xitara/nexus/assets/css/darkmode.css');
             // $controller->addCss('/plugins/xitara/nexus/assets/css/app.css');
             $controller->addJs('/plugins/xitara/nexus/assets/js/backend.js');
 
@@ -117,12 +117,27 @@ class Plugin extends PluginBase
             });
         });
 
+        /**
+         * extend other plugins if needed
+         */
         Event::listen('backend.form.extendFieldsBefore', function ($widget) {
-            if (!($widget->getController() instanceof Users && $widget->model instanceof User)) {
-                return;
+            /**
+             * set available role options in backend user setting
+             */
+            if ($widget->getController() instanceof Users && $widget->model instanceof User) {
+                $widget->tabs['fields']['role']['options'] = 'getMyRoleOptions';
             }
 
-            $widget->tabs['fields']['role']['options'] = 'getMyRoleOptions';
+            /**
+             * extend ToughDeveloper.ImageResizer with webp as default extension if installed
+             */
+            if (PluginManager::instance()->exists('ToughDeveloper\ImageResizer') === true) {
+                // Log::debug('ToughDeveloper\ImageResizer');
+                if ($widget->model instanceof \ToughDeveloper\ImageResizer\Models\Settings) {
+                    // Log::debug('ToughDeveloper\ImageResizer\Models\Settings');
+                    $widget->tabs['fields']['default_extension']['options']['webp'] = 'webp';
+                }
+            }
         });
 
         /**

@@ -46,7 +46,7 @@ class Dashboard extends Controller
     public function index()
     {
         $this->initReportContainer();
-        $this->pageTitle = 'xitara.nexus::lang.plugin.name';
+        // $this->pageTitle = 'xitara.nexus::lang.plugin.name';
 
         // $this->asExtension('ListController')->index();
     }
