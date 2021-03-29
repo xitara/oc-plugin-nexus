@@ -302,7 +302,9 @@ class TwigFilter
      */
     public function functionGenerateUid()
     {
-        return uniqid(rand(), true);
+        $id = uniqid(rand(), true);
+        $id = str_replace('.', '-', $id);
+        return $id;
     }
 
     /**

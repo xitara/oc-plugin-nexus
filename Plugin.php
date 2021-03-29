@@ -66,6 +66,11 @@ class Plugin extends PluginBase
         Config::set('cms.backendSkin', 'Xitara\Nexus\Classes\BackendSkin');
 
         /**
+         * include helpers
+         */
+        include_once dirname(__FILE__) . '/' . 'helpers.php';
+
+        /**
          * add items to sidemenu
          */
         $this->getSideMenu('Xitara.Nexus', 'nexus');
@@ -230,11 +235,13 @@ class Plugin extends PluginBase
      */
     public function registerNavigation()
     {
-        $iconSvg = NexusSettings::get('menu_icon');
-        if ($iconSvg == '' && NexusSettings::get('menu_icon_text', '') == '') {
+        $nexus = NexusSettings::instance();
+        $iconSvg = '';
+
+        if ($nexus->menu_icon_uploaded) {
+            $iconSvg = $nexus->menu_icon_uploaded->getPath();
+        } elseif (NexusSettings::get('menu_icon_text', '') == '') {
             $iconSvg = 'plugins/xitara/nexus/assets/images/icon-nexus.svg';
-        } elseif ($iconSvg != '') {
-            $iconSvg = url(Config::get('cms.storage.media.path') . $iconSvg);
         }
 
         if (($label = NexusSettings::get('menu_text')) == '') {
