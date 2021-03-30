@@ -1,4 +1,4 @@
-#!bash
+#!/bin/bash
 
 . $(pwd)"/bash/config.sh"
 

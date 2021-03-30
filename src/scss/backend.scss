@@ -10,11 +10,11 @@
 // Fonts
 @import 'base/fonts';
 
-/* Body */
-@import 'partials/body';
+/* Submenu */
+@import 'partials/submenu';
 
-/* Header */
-@import 'partials/header';
-
-/* Footer */
-@import 'partials/footer';
+/* backend */
+.center-switch {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+}

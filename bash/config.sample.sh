@@ -1,4 +1,4 @@
-#!bash
+#!/bin/bash
 
 # list of files and folder to pack/deploy. top: plugins, aber empty line, themes
 STORAGE=(

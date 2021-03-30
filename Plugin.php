@@ -83,6 +83,8 @@ class Plugin extends PluginBase
             $controller->addCss('/plugins/xitara/nexus/assets/css/app.css');
             // $controller->addCss('/plugins/xitara/nexus/assets/css/darkmode.css');
             // $controller->addCss('/plugins/xitara/nexus/assets/css/app.css');
+
+            $controller->addCss('/plugins/xitara/nexus/assets/css/backend.css');
             $controller->addJs('/plugins/xitara/nexus/assets/js/backend.js');
 
             if ($controller instanceof Backend\Controllers\Index) {

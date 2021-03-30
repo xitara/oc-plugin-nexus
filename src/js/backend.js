@@ -65,4 +65,4 @@ $on(document, 'DOMContentLoaded', () => {
     });
 });
 
-import '../scss/styles.scss';
+import '../scss/backend.scss';
