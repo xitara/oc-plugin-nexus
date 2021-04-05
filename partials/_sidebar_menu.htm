@@ -61,6 +61,7 @@
                         <?= isset($item->attributes['line']) ? ' border-' . $item->attributes['line'] : null; ?>
                         "
                         data-keywords="<?= e(trans($item->attributes['keywords'] ?? '')); ?>">
+                        <?= (isset($item->attributes['bold']) && $item->attributes['bold'] === true) ? '<b>' : null ?>
                         <a href="<?= $item->url; ?>" target="<?= $item->attributes['target'] ?? '_self';?>">
                             <?php if ($item->iconSvg === null): ?>
                                 <i class="sidebar-menu-item <?= $item->icon; ?>"></i>
@@ -72,6 +73,7 @@
                                 <?= e(trans($item->attributes['description'] ?? '')); ?>
                             </span>
                         </a>
+                        <?= (isset($item->attributes['bold']) && $item->attributes['bold'] === true) ? '</b>' : null ?>
                     </li>
                 <?php endif; ?>
             <?php endforeach; ?>
