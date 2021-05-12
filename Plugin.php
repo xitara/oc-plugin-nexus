@@ -430,42 +430,18 @@ class Plugin extends PluginBase
 
     public function registerComponents()
     {
-        return [
-            'Xitara\Nexus\Components\FontAwsome' => 'fontAwsome',
-        ];
+        if (NexusSettings::get('is_twig_filters')) {
+            return [
+                'Xitara\Nexus\Components\FontAwsome' => 'fontAwsome',
+            ];
+        }
     }
 
     public function registerMarkupTags()
     {
-        $twigfilter = new TwigFilter;
-
-        $filters = [];
-        $functions = [];
-
         if (NexusSettings::get('is_twig_filters')) {
-            $filters = [
-                'phone_link' => [$twigfilter, 'filterPhoneLink'],
-                'email_link' => [$twigfilter, 'filterEmailLink'],
-                'mediadata' => [$twigfilter, 'filterMediaData'],
-                'filesize' => [$twigfilter, 'filterFileSize'],
-                'regex_replace' => [$twigfilter, 'filterRegexReplace'],
-                'slug' => 'str_slug',
-                'strip_html' => [$twigfilter, 'filterStripHtml'],
-                'truncate_html' => [$twigfilter, 'filterTruncateHtml'],
-                'inject' => [$twigfilter, 'filterInject'],
-                'image_text' => [$twigfilter, 'filterAddImageText'],
-            ];
-
-            $functions = [
-                'uid' => [$twigfilter, 'functionGenerateUid'],
-            ];
+            $filter = new TwigFilter;
+            return $filter->registerMarkupTags();
         }
-
-        $filters['fa'] = [$twigfilter, 'filterFontAwesome'];
-
-        return [
-            'filters' => $filters,
-            'functions' => $functions,
-        ];
     }
 }

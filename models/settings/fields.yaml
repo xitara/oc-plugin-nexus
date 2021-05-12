@@ -11,8 +11,15 @@ fields:
     is_compact_display:
         label: xitara.nexus::settings.is_compact_display
         type: switch
-        span: right
+        span: storm
+        cssClass: col-md-3
         comment: xitara.nexus::settings.is_compact_display_comment
+    is_twig_filters:
+        label: xitara.nexus::settings.is_twig_filters
+        type: switch
+        span: storm
+        cssClass: col-md-3
+        comment: xitara.nexus::settings.is_twig_filters_comment
     menu_icon_uploaded:
         label: xitara.nexus::settings.menu_icon
         type: fileupload

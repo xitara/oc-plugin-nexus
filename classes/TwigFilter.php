@@ -1,6 +1,13 @@
 <?php namespace Xitara\Nexus\Classes;
 
+use Carbon\Carbon;
+use Cms\Classes\Theme;
+use Config;
+use File;
 use Html;
+use Kuse\Core\Plugin as Core;
+use League\Flysystem\FileNotFoundException;
+use October\Rain\Parse\Bracket;
 use Storage;
 
 /**
@@ -8,8 +15,34 @@ use Storage;
  */
 class TwigFilter
 {
+    public function registerMarkupTags()
+    {
+        return [
+            'filters' => [
+                'phone_link' => [$this, 'filterPhoneLink'],
+                'email_link' => [$this, 'filterEmailLink'],
+                'mediadata' => [$this, 'filterMediaData'],
+                'filesize' => [$this, 'filterFileSize'],
+                'regex_replace' => [$this, 'filterRegexReplace'],
+                'slug' => 'str_slug',
+                'strip_html' => [$this, 'filterStripHtml'],
+                'truncate_html' => [$this, 'filterTruncateHtml'],
+                'inject' => [$this, 'filterInject'],
+                'image_text' => [$this, 'filterAddImageText'],
+                'parentlink' => [$this, 'filterParentLink'],
+                'localize' => [$this, 'filterLocalize'],
+                'css_var' => [$this, 'filterCssVars'],
+                'fa' => [$this, 'filterFontAwesome'],
+            ],
+            'functions' => [
+                'uid' => [$this, 'functionGenerateUid'],
+                'config' => [$this, 'functionConfig'],
+            ],
+        ];
+    }
+
     /**
-     * |phone_link - adds link to given phone
+     * adds link to given phone - |phone_link
      *
      * options: {
      *     'classes': 'class1 class2 classN',
@@ -18,11 +51,16 @@ class TwigFilter
      *     'hide_mail': true|false (hide mail-address in text or not)
      * }
      *
+     * example:
+     * <img src="{{ store.image.getPath() }}"{{ store.image|image_text({
+     *     default: {title: store.name}
+     * }) }}>
+     *
      * @param  string $text    text from twig
      * @param  array $options options from twig
      * @return string          complete link in html
      */
-    public function filterPhoneLink($text, $options = null)
+    public function filterPhoneLink($text, $options = null): string
     {
         /**
          * process options
@@ -56,20 +94,21 @@ class TwigFilter
     }
 
     /**
-     * |email_link - adds link to given email
+     * adds link to given email - |email_link
      *
      * options: {
      *     'classes': 'class1 class2 classN',
      *     'text_before': '<strong>sample</strong>',
      *     'text_after': '<strong>sample</strong>',
-     *     'hide_mail': true|false (hide mail-address in text or not)
+     *     'hide_mail': true|false (hide mail-address in text or not),
+     *     'image': this.theme.icon_email|media
      * }
      *
      * @param  string $text    text from twig
      * @param  array $options options from twig
      * @return string          complete link in html
      */
-    public function filterEmailLink($text, $options = null)
+    public function filterEmailLink($text, $options = null): string
     {
         /**
          * remove subject and body from mail if given
@@ -85,6 +124,7 @@ class TwigFilter
         $textAfter = $options['text_after'] ?? '';
         $classes = $options['classes'] ?? null;
         $hideMail = $options['hide_mail'] ?? false;
+        $image = $options['image'] ?? null;
 
         /**
          * generate link
@@ -98,6 +138,10 @@ class TwigFilter
         $link .= ' href="mailto:' . Html::email($mail) . $query . '">';
         $link .= $textBefore;
 
+        if ($image !== null) {
+            $link .= '<img src="' . $image . '" alt="' . $mail . '">';
+        }
+
         if ($hideMail === false) {
             $link .= $mail;
         }
@@ -109,7 +153,7 @@ class TwigFilter
     }
 
     /**
-     * |mediadata - mediadata filter
+     * mediadata filter - |mediadata
      *
      * file should be in storage/app/[path], where path-default is "media"
      * for the media-manager
@@ -118,28 +162,53 @@ class TwigFilter
      * @param  string $path  relativ path in storage/app
      * @return array|boolean        filedata or false if file not exists
      */
-    public function filterMediaData($media, $path = 'media')
+    public function filterMediaData($media, $path = 'media'): array
     {
-        if ($media === null) {
-            return false;
-        }
-
-        if (strpos(Storage::getMimetype($path . $media), '/')) {
-            list($type, $art) = explode('/', Storage::getMimetype($path . $media));
-        }
-
-        $data = [
-            'size' => Storage::size($path . $media),
-            'mime_type' => Storage::getMimetype($path . $media),
-            'type' => $type ?? null,
-            'art' => $art ?? null,
+        $empty = [
+            'size' => 0,
+            'mime_type' => 'none/none',
+            'type' => 'none',
+            'art' => 'none',
         ];
 
-        return $data;
+        if ($media === null) {
+            return $empty;
+        }
+
+        // return [Storage::getMimetype($path . $media)];
+
+        // Log::debug($media[0]);
+        // Log::debug($path);
+
+        try {
+            if ($media[0] != '/') {
+                $media = '/' . $media;
+            }
+            // Log::debug($media);
+
+            if (strpos(Storage::getMimetype($path . $media), '/')) {
+                list($type, $art) = explode('/', Storage::getMimetype($path . $media));
+            }
+
+            if ($art == 'svg+xml') {
+                $art = 'svg';
+            }
+
+            $data = [
+                'size' => Storage::size($path . $media),
+                'mime_type' => Storage::getMimetype($path . $media),
+                'type' => $type ?? null,
+                'art' => $art ?? null,
+            ];
+
+            return $data;
+        } catch (FileNotFoundException $e) {
+            return $empty;
+        }
     }
 
     /**
-     * |filesize - filesize filter
+     * filesize filter - |filesize
      *
      * returns filesize of given file
      *
@@ -147,38 +216,31 @@ class TwigFilter
      * @param  string $path      path relative to storage/app, default "media"
      * @return int|boolean           filesize in bytes or false if file not exists
      */
-    public function filterFileSize($filename, $path = 'media')
+    public function filterFileSize($filename, $path = 'media'): string
     {
         $size = Storage::size($path . $filename);
         return $size;
     }
 
     /**
-     * |regex_replace - replaces text with a regex with preg_replace
+     * filter regex replace - |regex_replace
      *
-     * @autor   mburghammer
-     * @date    2021-01-01T15:20:11+01:00
-     * @version 0.0.1
-     * @since   0.0.1
-     * @param   string      $subject     haystack
-     * @param   string      $pattern     needle (regex)
-     * @param   string      $replacement replacement
-     * @return  string                   replaced string
+     * replace a regex pattern with replacement in a given string
+     *
+     * @param  string $subject     source string
+     * @param  string $pattern     pattern to replace
+     * @param  string $replacement replacement string
+     * @return string              new string
      */
-    public function filterRegexReplace($subject, $pattern, $replacement)
+    public function filterRegexReplace($subject, $pattern, $replacement): string
     {
         return preg_replace($pattern, $replacement, $subject);
     }
 
     /**
-     * |strip_html - strips all html from string
-     *
-     * @autor   mburghammer
-     * @date    2021-01-01T15:22:33+01:00
-     * @version 0.0.1
-     * @since   0.0.1
-     * @param   string      $text text to strip html from
-     * @return  string            plain text without html
+     * strip html from a string - |strip_html
+     * @param  string $text string to replace html within
+     * @return string       string without html
      */
     public function filterStripHtml($text)
     {
@@ -186,18 +248,13 @@ class TwigFilter
     }
 
     /**
-     * |truncate_html - truncate a string and repeairs html if needed
-     *
-     * @autor   mburghammer
-     * @date    2021-01-01T15:23:13+01:00
-     * @version 0.0.1
-     * @since   0.0.1
-     * @param   string      $text   string to truncate
-     * @param   integer     $lenght length of string without hint
-     * @param   string      $hint   hint-string if string is truncated
-     * @return  string              truncasted string
+     * truncate text and check html tags - |truncate_html
+     * @param  string $text   string to truncate
+     * @param  integer $lenght string length after truncate. Default: 100
+     * @param  string $hint   hint after truncated text, default '...'
+     * @return string         truncated string with html
      */
-    public function filterTruncateHtml($text, $lenght, $hint = '...')
+    public function filterTruncateHtml($text, $lenght = 100, $hint = '...'): string
     {
         return Html::limit($text, $lenght, $hint);
     }
@@ -207,10 +264,22 @@ class TwigFilter
      * @param  string $text filename relative to project root
      * @return string       content of file
      */
-    public function filterInject(string $text): string
+    public function filterInject($text): string
     {
-        $file = file_get_contents(realpath(base_path($text)));
-        return $file;
+        $fileContent = File::get(base_path($text));
+        $fileContent = preg_replace('/<\?xml(.|\s)*?\?>/', '', $fileContent);
+
+        return $fileContent;
+    }
+
+    /**
+     * get data from config files - |config
+     * @param  string $text config route like Config::get() -> example: app.name
+     * @return string       config-data or null
+     */
+    public function functionConfig($text)
+    {
+        return Config::get($text);
     }
 
     /**
@@ -300,13 +369,51 @@ class TwigFilter
      * @since   0.0.1
      * @return  string      unique id
      */
-    public function functionGenerateUid()
+    public function functionGenerateUid(): string
     {
         $id = uniqid(rand(), true);
         $id = str_replace('.', '-', $id);
         return $id;
     }
 
+    /**
+     * creates a link to parent page (one level up) - |parentlink
+     * @param  string $text filename relative to project root
+     * @return string       content of file
+     */
+    public function filterParentLink($text): string
+    {
+        $parts = explode('/', $text);
+        array_pop($parts);
+
+        return join('/', $parts);
+    }
+
+    /**
+     * generates date and time with utcOffset  - |localize(this.param.utcOffset)
+     * @param  array $data   datetime-string, utc-offset
+     * @return string       patched timestamp
+     */
+    public function filterLocalize(...$data)
+    {
+        $utcOffset = $data[1] ?? null;
+
+        if ($utcOffset !== null && $utcOffset !== false) {
+            $utcOffset *= -1;
+            $utcOffset /= 60;
+
+            $timezone = Carbon::now($utcOffset)->tzName;
+        } else {
+            $timezone = Core::getTimezone();
+        }
+
+        \Log::debug($timezone);
+
+        $time = Carbon::parse($data[0]);
+        $time->setTimezone($timezone);
+
+        return $time->toDateTimeString();
+    }
     /**
      * fa() - generates full path to fa-sprites
      *
@@ -323,5 +430,30 @@ class TwigFilter
         }
 
         return plugins_url('xitara/nexus/assets/sprites/' . $collection . '.svg#' . $icon);
+    }
+
+    /**
+     * |css_var - parse string to math pathes
+     *
+     * @autor   mburghammer
+     * @date    2021-02-14T00:22:14+01:00
+     * @version 0.0.1
+     * @since   0.0.1
+     * @todo <mid>check for avtive URL with Briddle.MultiSite</mid>
+     *
+     * @param  string $string string to parse
+     * @param  array $vars optional vars
+     * @return  string      sprite with full path
+     */
+
+    public function filterCssVars($string, ...$vars)
+    {
+        $theme = Theme::getActiveTheme();
+        $mediaUrl = str_replace(base_path() . '/', '', storage_path('app/media'));
+
+        return Bracket::parse($string, [
+            'theme' => Config::get('app.url') . $theme->getDirName(),
+            'media' => Config::get('app.url') . $mediaUrl,
+        ]);
     }
 }
