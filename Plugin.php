@@ -55,6 +55,11 @@ class Plugin extends PluginBase
 
     public function boot()
     {
+        /**
+         * include helpers
+         */
+        include_once dirname(__FILE__) . '/' . 'helpers.php';
+
         // Check if we are currently in backend module.
         if (!App::runningInBackend()) {
             return;
@@ -64,11 +69,6 @@ class Plugin extends PluginBase
          * set new backend-skin
          */
         Config::set('cms.backendSkin', 'Xitara\Nexus\Classes\BackendSkin');
-
-        /**
-         * include helpers
-         */
-        include_once dirname(__FILE__) . '/' . 'helpers.php';
 
         /**
          * add items to sidemenu
