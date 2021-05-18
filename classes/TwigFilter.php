@@ -32,6 +32,7 @@ class TwigFilter
                 'parentlink' => [$this, 'filterParentLink'],
                 'localize' => [$this, 'filterLocalize'],
                 'css_var' => [$this, 'filterCssVars'],
+                'storage' => [$this, 'filterStorageUrl'],
                 'fa' => [$this, 'filterFontAwesome'],
             ],
             'functions' => [
@@ -97,6 +98,8 @@ class TwigFilter
      * adds link to given email - |email_link
      *
      * options: {
+     *     'subject': Subject in Mail-Programm
+     *     'body': Body in Mail-Programm
      *     'classes': 'class1 class2 classN',
      *     'text_before': '<strong>sample</strong>',
      *     'text_after': '<strong>sample</strong>',
@@ -133,6 +136,14 @@ class TwigFilter
 
         if ($classes !== null) {
             $link .= ' class="' . $classes . '"';
+        }
+
+        /**
+         * generate subject and/or body is given
+         */
+        if (trim($query) == '' && isset($options['subject'])) {
+            $query = '?subject=' . rawurlencode($options['subject']);
+            $query .= isset($options['body']) ? '&body=' . rawurlencode($options['body']) : '';
         }
 
         $link .= ' href="mailto:' . Html::email($mail) . $query . '">';
@@ -455,5 +466,26 @@ class TwigFilter
             'theme' => Config::get('app.url') . $theme->getDirName(),
             'media' => Config::get('app.url') . $mediaUrl,
         ]);
+    }
+
+    /**
+     * |storage - add relative storage-path to string like |media or |theme
+     *
+     * @autor   mburghammer
+     * @date    2021-05-18T11:35:08+02:00
+     * @version 0.0.1
+     * @since   0.0.1
+     *
+     * @param  string $string string to add storage-path to
+     * @return string         $string with relative storage-path
+     */
+    public function filterStorageUrl($string)
+    {
+        // return storage_path($string);
+
+        $appPath = str_replace(base_path() . '/', '', app_path());
+        $storagePath = str_replace(base_path() . '/', '', storage_path());
+
+        return $storagePath . '/' . $appPath . '/' . $string;
     }
 }

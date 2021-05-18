@@ -4,7 +4,14 @@
 ### Custom ###
 build
 stats.json*
-assets
+/assets
+
+# font awsome
+/static/assets/sprites
+/static/assets/svgs
+/static/assets/fonts
+# end font awsome
+
 src/**/*.css*
 yarn.lock
 *.map
