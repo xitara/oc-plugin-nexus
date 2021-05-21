@@ -150,7 +150,12 @@ class TwigFilter
         $link .= $textBefore;
 
         if ($image !== null) {
-            $link .= '<img src="' . $image . '" alt="' . $mail . '">';
+            if (is_array($image)) {
+                $link .= '<img src="' . $image['image'] . '" alt="' . $mail . '" width="' . $image['width'] . '" height="' . $image['height'] . '">';
+            } else {
+                $link .= '<img src="' . $image . '" alt="' . $mail . '">';
+            }
+
         }
 
         if ($hideMail === false) {
